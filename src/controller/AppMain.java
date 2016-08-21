@@ -6,6 +6,8 @@
 package controller;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -97,6 +99,8 @@ public class AppMain extends Application {
      */
     public static void main(String[] args) {
         try {
+        	
+        	hideConsole();
             launch(args);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -107,5 +111,17 @@ public class AppMain extends Application {
         stage.close();
         appmain.start(stage);
         
+    }
+    
+    public static void hideConsole(){
+    	PrintStream originalStream = System.out;
+
+    	PrintStream dummyStream    = new PrintStream(new OutputStream(){
+    	    public void write(int b) {
+    	        //NO-OP
+    	    }
+    	});
+    	
+    	System.setOut(dummyStream);
     }
 }
