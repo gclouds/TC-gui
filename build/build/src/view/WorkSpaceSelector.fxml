@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<StackPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <center>
+            <Label prefHeight="17.0" prefWidth="124.0" text="Please choose work space" BorderPane.alignment="CENTER" />
+         </center>
+         <right>
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="138.0" text="Button" BorderPane.alignment="CENTER" />
+         </right>
+      </BorderPane>
+   </children>
+</StackPane>

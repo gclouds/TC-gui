@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="TrueChipGUI.jnlp">
+  <information>
+    <title>TrueChipGUI</title>
+    <vendor>truechip</vendor>
+    <description>TrueChipGUI</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="TrueChipGUI.jar" size="303248" download="eager" />
+    <jar href="libs\commons-io-2.4.jar" size="185140" download="eager" />
+    <jar href="libs\commons-lang-2.6.jar" size="284220" download="eager" />
+    <jar href="libs\guava-19.0-rc1.jar" size="2298412" download="eager" />
+    <jar href="libs\javax.inject-1.jar" size="2497" download="eager" />
+    <jar href="libs\org.eclipse.fx.core-2.2.0.jar" size="146474" download="eager" />
+    <jar href="libs\org.eclipse.fx.ui.controls-2.2.0.jar" size="502528" download="eager" />
+    <jar href="libs\org.eclipse.fx.ui.panes-2.2.0.jar" size="67419" download="eager" />
+    <jar href="libs\org.eclipse.jdt.annotation-2.0.100.jar" size="17100" download="eager" />
+    <jar href="libs\zip4j-1.3.2.jar" size="131383" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="0" height="0" main-class="controller.AppMain"  name="TrueChipGUI" />
+  <update check="background"/>
+</jnlp>
