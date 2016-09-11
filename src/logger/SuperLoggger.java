@@ -53,7 +53,7 @@ public class SuperLoggger {
 				continue;
 			}
 			if (!reset) {
-				logic(dataList, lineArray, currentString);
+				dataList=logic(dataList, lineArray, currentString);
 				System.out.println("end in !reset");
 
 			}
@@ -64,22 +64,24 @@ public class SuperLoggger {
 	}
 
 
-	private void logic(DataList mainDataList, String[] currentData, String currentString) throws Exception {
+	private DataList logic(DataList mainDataList, String[] currentData, String currentString) throws Exception {
 		Matcher findMatch = StringComparator.findMatch(mainDataList.getCurrentString(), currentString);
 		switch (findMatch) {
 		case EXACT_MATCH:
-			break;
+			return mainDataList;
 		case NO_MATCH:
 			if (mainDataList.hasParent()) {
-				logic(mainDataList.getParent(), currentData, currentString);
+				return logic(mainDataList.getParent(), currentData, currentString);
 			}
-			break;
+			return mainDataList;
 		case PREFIX_MATCH:
 			DataList currentDataList = new DataList(generateDataMap(currentData));
 			mainDataList.getChild().add(currentDataList);
 			currentDataList.setParent(mainDataList);
-			break;
+			return currentDataList;
 		}
+		
+		return mainDataList;
 	}
 
 	Map<String,String> toArrayList(String[] stringArray) {

@@ -55,7 +55,7 @@ public class DataList {
 	}
 
 	public String getCurrentString() {
-		return currentString;
+		return data.get("Row");
 	}
 
 	public void setCurrentString(String currentString) {
