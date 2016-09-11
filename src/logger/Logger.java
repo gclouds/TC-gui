@@ -5,12 +5,84 @@
  */
 package logger;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import utils.FileReader;
+
 /**
  *
  * @author gauravsi
  */
-public class Logger {
-    public static void info(String msg){
+public class Logger extends SuperLoggger {
+	
+	
+	private Map<String, String> headerMap;
+	private List<DataList> leftSideTable;
+	
+    public Logger(List<String[]> list) throws Exception {
+		super(list);
+		
+		Map<String, Object> generateTableData = super.generateTableData();
+		
+		headerMap = (Map<String, String>) generateTableData.get("header");
+		leftSideTable = (List<DataList>) generateTableData.get("data");
+		
+	}
+    
+
+	public static void info(String msg){
         System.out.println(msg);
     }
+
+
+	public Map<String, String> getHeaderMap() {
+		return headerMap;
+	}
+
+
+	public void setHeaderMap(Map<String, String> headerMap) {
+		this.headerMap = headerMap;
+	}
+
+
+	public List<DataList> getLeftSideTableData() {
+		return leftSideTable;
+	}
+
+
+	public void setLeftSideTableData(List<DataList> leftSideTable) {
+		this.leftSideTable = leftSideTable;
+	}
+	
+	
+	public static List<String[]> extractData(File logFile){
+		List<String[]> output= new ArrayList<>();
+		List<String> readLinesForLogger = FileReader.readLinesForLogger(logFile);
+		
+		Iterator<String> iterator = readLinesForLogger.iterator();
+		
+		while(iterator.hasNext()){
+			String line = iterator.next();
+			if(line.startsWith("|") && line.endsWith("|")){
+				String correctData = line.substring(line.indexOf("|")+1, line.lastIndexOf("|"));
+				String[] split = correctData.split("\\|");
+				output.add(split);
+				//print(split);
+			}
+		}
+		return output;
+		
+	}
+	
+	private static void print(String[] toPrint){
+		
+		for(String str:toPrint){
+			System.out.println(str);
+		}
+		
+	}
 }

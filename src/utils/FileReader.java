@@ -53,8 +53,7 @@ public class FileReader {
         }
     }
     
-        public static List<String> readLinesForLogger(String pathname) {
-        File file = new File(pathname);
+        public static List<String> readLinesForLogger(File file) {
 
         BufferedReader br = null;
         try {

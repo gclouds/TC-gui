@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 import truechip.ImportProject;
 import truechip.ListTestCase;
 import utils.Configurations;
+import utils.MainWindowsUtils;
 import logger.Logger;
 import truechip.TransactionLogger;
 
@@ -84,6 +85,7 @@ public class MainPageController implements Initializable {
         BorderPane get = listTestCase.get();
         addMainContainer(get);
         initToolBar();
+        MainWindowsUtils.setMainController(this);
     }
 
     @FXML

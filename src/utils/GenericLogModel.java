@@ -17,24 +17,6 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class GenericLogModel {
     Map<String, String> logMap=new HashMap<>();
-    boolean hasChild=false;
-    List<GenericLogModel> child= new ArrayList();
-
-    public boolean isHasChild() {
-        return hasChild;
-    }
-
-    public void setHasChild(boolean hasChild) {
-        this.hasChild = hasChild;
-    }
-
-    public List<GenericLogModel> getChild() {
-        return child;
-    }
-
-    public void addChild(GenericLogModel child) {
-        this.child.add(child);
-    }
     
     public Map<String, String> getLogMap() {
         return logMap;

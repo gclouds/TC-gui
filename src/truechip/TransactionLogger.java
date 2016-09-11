@@ -5,10 +5,12 @@
  */
 package truechip;
 
-import controller.MainPageController;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import controller.MainPageController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -24,12 +26,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import logger.DataList;
 import logger.Logger;
+import logger.SuperLoggger;
 import models.DetailedLogs;
 import models.ProjectData;
 import utils.Configurations;
@@ -43,167 +48,192 @@ import utils.ReadLogger;
  */
 public class TransactionLogger {
 
-    Button broseButton;
-    private TableView detailedLogReport;
-    Map<String, List> loggerMap;
-    private AnchorPane mainContainer;
-    Label logFileName = new Label();
-    BorderPane listView = null;
-    TreeView treeView = null;
-    String outputfolder = Configurations.getWorkSpaceFilePath().getAbsolutePath();
-    String makeFilePath = "";
-    String projectPath = null;
-    String tcName = "";
-    VBox rightVBox = null;
-    TreeTableView centerListView;
-    GridPane rightGrid = null;
-    public TextArea consoleLog = new TextArea();
-    public Button runButton = new Button("Run");
-    FlowPane rightSideContent = new FlowPane();
-    ComboBox targetComboBox = new ComboBox();
-    Thread thread;
-    MainPageController mainController;
-    Map<String, ProjectData> projects;
+	List<String> listOfKeysDetailed;
+	File logFile;
+	Button browseButton;
+	Button refreshButton = new Button("refresh");
+	private TableView detailedLogReport;
+	Map<String, List> loggerMap;
+	private AnchorPane mainContainer;
+	Label logFileName = new Label();
+	BorderPane listView = null;
+	TreeView treeView = null;
+	VBox rightVBox = null;
+	TreeTableView centerListView;
+	GridPane rightGrid = null;
+	public TextArea consoleLog = new TextArea();
+	public Button runButton = new Button("Run");
+	FlowPane rightSideContent = new FlowPane();
+	ComboBox targetComboBox = new ComboBox();
+	Thread thread;
+	MainPageController mainController;
+	Map<String, ProjectData> projects;
 
-    public TransactionLogger(MainPageController mainController) {
-        this.mainController = mainController;
-        this.mainContainer = mainController.mainContainer;
-        rightGrid = new GridPane();
+	public TransactionLogger(MainPageController mainController) {
+		this.mainController = mainController;
+		this.mainContainer = mainController.mainContainer;
+		rightGrid = new GridPane();
 
-        detailedLogReport = new TableView();
-        TableColumn request = new TableColumn("Key");
-        request.setCellValueFactory(new PropertyValueFactory<DetailedLogs, String>("requestCol"));
+		detailedLogReport = new TableView();
+		TableColumn request = new TableColumn("Key");
+		request.setCellValueFactory(new PropertyValueFactory<DetailedLogs, String>("requestCol"));
 
-        TableColumn completion = new TableColumn("Value");
-        completion.setCellValueFactory(new PropertyValueFactory<DetailedLogs, String>("completionCol"));
-        detailedLogReport.getColumns().addAll(request, completion);
-    }
+		TableColumn completion = new TableColumn("Value");
+		completion.setCellValueFactory(new PropertyValueFactory<DetailedLogs, String>("completionCol"));
+		detailedLogReport.getColumns().addAll(request, completion);
+		
+	}
 
-    public void build() {
-        listView = new BorderPane();
-        listView.setCenter(new TableView());
-        listView.setRight(new TableView());
+	public void build() {
+		listView = new BorderPane();
+		listView.setCenter(new TableView());
+		listView.setRight(new TableView());
 
-        broseButton = new Button("browse log file");
+		browseButton = new Button("browse log file");
 
-        broseButton.setOnMouseClicked(this::selectFile);
-        mainController.toolbarMain.getItems().clear();
-        mainController.toolbarMain.getItems().addAll(new Label("Logger viewer"), broseButton, logFileName);
-    }
+		browseButton.setOnMouseClicked(this::selectFile);
+		mainController.toolbarMain.getItems().clear();
+		refreshButton.setVisible(false);
+		refreshButton.setOnMouseClicked(this::setLoggerView);
+		mainController.toolbarMain.getItems().addAll(new Label("Logger Viewer"), browseButton,logFileName,refreshButton);
+	}
 
-    public BorderPane get() {
-        if (listView == null) {
-            System.out.println("truechip.TransactionLogger.get()");
-            build();
-            return listView;
-        } else {
-            return listView;
-        }
+	public BorderPane get() {
+		if (listView == null) {
+			System.out.println("truechip.TransactionLogger.get()");
+			build();
+			return listView;
+		} else {
+			return listView;
+		}
 
-    }
+	}
 
-    @FXML
-    private void selectFile(MouseEvent event) {
-        try {
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle("Open File");
-            File logFile = chooser.showOpenDialog(new Stage());
+	@FXML
+	private void selectFile(MouseEvent event) {
+		try {
+			FileChooser chooser = new FileChooser();
+			chooser.setTitle("Open File");
+			logFile = chooser.showOpenDialog(new Stage());
+			refreshLogViewer(logFile);
 
-            ReadLogger logger = new ReadLogger(logFile.getAbsolutePath());
-            Logger.info("truechip.TransactionLogger.selectFile() map:");
-            
-            detailedLogReport.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-//            loggerMap = logger.getMap();
-//
-//            Logger.info("truechip.TransactionLogger.selectFile() map:" + loggerMap.size());
-//            Map<String, List> treeMap = new TreeMap<String, List>(loggerMap);
-//            treeMap.remove("time");
-//            Iterator<String> keySet = treeMap.keySet().iterator();
-//            while (keySet.hasNext()) {
-//                centerListView.getItems().add(keySet.next());
-//            }
-            //listView.setLeft(centerListView);
-            LogModel log = new LogModel(logFile.getAbsolutePath());
-            final TreeItem<GenericLogModel> treeItem = new TreeItem<>(log.getRootModel());
-            List<GenericLogModel> listModels = log.getListModels();
-            for (int i = 0; i < listModels.size(); i++) {
-                System.out.println("adding child to centerlistview: " + listModels.get(i).getLogMap().get("Time"));
-                TreeItem<GenericLogModel> childTreeItem = addChildren(listModels.get(i));
-                treeItem.getChildren().add(childTreeItem);
-            }
-            TreeTableView<GenericLogModel> tLeftHandSideTable = logger.getTLeftHandSideTable();
-            tLeftHandSideTable.setRoot(treeItem);
-            centerListView = tLeftHandSideTable;
-            centerListView.setRoot(treeItem);
-            centerListView.setShowRoot(false);
-            centerListView.setOnMouseClicked(this::mylistclicked);
+	}
 
-            logFileName.setText(logFile.getAbsolutePath());
+	@FXML
+	private void mylistclicked(MouseEvent event) {
+		TreeItem selectedItems = (TreeItem) centerListView.getSelectionModel().getSelectedItem();
+		GenericLogModel value = (GenericLogModel) selectedItems.getValue();
+		System.out.println("Adding detailed table row.........." + value.getLogMap());
+		detailedLogReport.getItems().clear();
 
-            detailedLogReport=logger.getDetailedTable();
-            detailedLogReport.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-            centerListView.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
-            listView.setCenter(centerListView);
+		for (Map.Entry<String, String> keySet : value.getLogMap().entrySet()) {
+			if (listOfKeysDetailed.contains(keySet.getKey())) {
+				DetailedLogs detailedLogs = new DetailedLogs(keySet.getKey(), keySet.getValue());
+				detailedLogReport.getItems().add(detailedLogs);
+			}
 
-            listView.setRight(detailedLogReport);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		}
+		System.out.println("Added detailed table row.........." + selectedItems);
+		detailedLogReport.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	}
 
-    }
+	public void refreshMainContainer() {
+		build();
+		mainContainer.getChildren().clear();
+		mainContainer.getChildren().add(get());
+		AnchorPane.setBottomAnchor(get(), 0.0);
+		AnchorPane.setTopAnchor(get(), 0.0);
+		AnchorPane.setLeftAnchor(get(), 0.0);
+		AnchorPane.setRightAnchor(get(), 0.0);
+	}
 
-    @FXML
-    private void mylistclicked(MouseEvent event) {
-        TreeItem selectedItems = (TreeItem) centerListView.getSelectionModel().getSelectedItem();
-        GenericLogModel value =(GenericLogModel) selectedItems.getValue();
-        System.out.println("Adding detailed table row.........." + value.getLogMap());
-        detailedLogReport.getItems().clear();
+	public void addToMainContainer(BorderPane listView) {
+		mainContainer.getChildren().clear();
+		mainContainer.getChildren().add(listView);
+		AnchorPane.setBottomAnchor(get(), 0.0);
+		AnchorPane.setTopAnchor(get(), 0.0);
+		AnchorPane.setLeftAnchor(get(), 0.0);
+		AnchorPane.setRightAnchor(get(), 0.0);
+	}
 
-        for (Map.Entry<String, String> keySet:value.getLogMap().entrySet()) {
-            DetailedLogs detailedLogs = new DetailedLogs(keySet.getKey(), keySet.getValue());
-            detailedLogReport.getItems().add(detailedLogs);
-        }
-        System.out.println("Added detailed table row.........." + selectedItems);
-        detailedLogReport.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    }
+	public TreeItem<GenericLogModel> addChildren(GenericLogModel model, DataList dataList) {
+		TreeItem<GenericLogModel> childTreeItem = new TreeItem<>(model);
+		if (dataList.hasChild()) {
+			for (DataList childDataList : dataList.getChild()) {
+				GenericLogModel chilModel= new GenericLogModel();
+				chilModel.setLogMap(childDataList.getData());
+				childTreeItem.getChildren().add(addChildren(chilModel,childDataList));
+			}
+		}
+		return childTreeItem;
+	}
+	
+	private void setLoggerView(MouseEvent event){
+		refreshLogViewer(logFile);
+	}
+	
+	private void refreshLogViewer(File logFile){
+		try{
+			ReadLogger logger = new ReadLogger(logFile);
+			Logger.info("truechip.TransactionLogger.selectFile() map:");
 
-    @FXML
-    private void tcListClick(MouseEvent event) {
-        ListView testCaseSelected = (ListView) event.getSource();
-        if (testCaseSelected != null) {
-            tcName = testCaseSelected.getSelectionModel().getSelectedItem().toString();
-            System.out.println("truechip.ListTestCase.tcListClick():" + tcName);
-        }
-    }
+			// setting detailed table
+			detailedLogReport.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+			detailedLogReport = logger.getDetailedTable();
+			listOfKeysDetailed = logger.getListOfKeysDetailed();
+			detailedLogReport.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+			
+			//LogModel log = new LogModel(logFile);
+			//final TreeItem<GenericLogModel> treeItem = new TreeItem<>(log.getRootModel());
+			//List<GenericLogModel> listModels = log.getListModels();
+			
+			List<String[]> extractedData = Logger.extractData(logFile);
+			
+			Logger logData=new Logger(extractedData);
+			
+			Map<String, String> headerMap = logData.getHeaderMap();
+			
+			List<DataList> leftSideTableData = logData.getLeftSideTableData();
+			
+			GenericLogModel headerMapLeftSideTable= new GenericLogModel();
+			headerMapLeftSideTable.setLogMap(headerMap);
+			
+			
+			final TreeItem<GenericLogModel> treeItem = new TreeItem<>(headerMapLeftSideTable);
 
-    public void refreshMainContainer() {
-        build();
-        mainContainer.getChildren().clear();
-        mainContainer.getChildren().add(get());
-        AnchorPane.setBottomAnchor(get(), 0.0);
-        AnchorPane.setTopAnchor(get(), 0.0);
-        AnchorPane.setLeftAnchor(get(), 0.0);
-        AnchorPane.setRightAnchor(get(), 0.0);
-    }
+			for (int i = 0; i < leftSideTableData.size(); i++) {
+				System.out.println("leftSideTableData: " + leftSideTableData.get(i).getData());
+				
+				DataList dataList = leftSideTableData.get(i);
+				GenericLogModel model= new GenericLogModel();
+				model.setLogMap(leftSideTableData.get(i).getData());
 
-    public void addToMainContainer(BorderPane listView) {
-        mainContainer.getChildren().clear();
-        mainContainer.getChildren().add(listView);
-        AnchorPane.setBottomAnchor(get(), 0.0);
-        AnchorPane.setTopAnchor(get(), 0.0);
-        AnchorPane.setLeftAnchor(get(), 0.0);
-        AnchorPane.setRightAnchor(get(), 0.0);
-    }
-    
-    public TreeItem<GenericLogModel> addChildren(GenericLogModel model){
-        TreeItem<GenericLogModel> childTreeItem= new TreeItem<>(model);
-        if(model.isHasChild()){
-            for(GenericLogModel child:model.getChild()){
-                childTreeItem.getChildren().add(addChildren(child));
-            }
-        }
-        return childTreeItem;
-    }
+				TreeItem<GenericLogModel> childTreeItem = addChildren(model,dataList );
+				
+				treeItem.getChildren().add(childTreeItem);
+			}
+
+			TreeTableView<GenericLogModel> tLeftHandSideTable = logger.getTLeftHandSideTable();
+			tLeftHandSideTable.setRoot(treeItem);
+			centerListView = tLeftHandSideTable;
+			centerListView.setRoot(treeItem);
+			centerListView.setShowRoot(false);
+			centerListView.setOnMouseClicked(this::mylistclicked);
+
+			logFileName.setText(logFile.getAbsolutePath());
+
+			centerListView.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
+			listView.setCenter(centerListView);
+
+			listView.setRight(detailedLogReport);
+			refreshButton.setVisible(true);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

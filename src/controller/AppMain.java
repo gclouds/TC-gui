@@ -83,7 +83,7 @@ public class AppMain extends Application {
 
             Scene scene = new Scene(root);
             String externalForm = getClass().getClassLoader().getResource("styles/caspian.css").toExternalForm();
-            scene.getStylesheets().add(externalForm);
+            //scene.getStylesheets().add(externalForm);
             stage.setTitle("TrueChip- GUI");
             stage.getIcons().add(new Image("resources/true-chip-logo.png"));
             stage.setScene(scene);
@@ -100,7 +100,7 @@ public class AppMain extends Application {
     public static void main(String[] args) {
         try {
         	
-        	hideConsole();
+        	//hideConsole();
             launch(args);
         } catch (Throwable t) {
             t.printStackTrace();

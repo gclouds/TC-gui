@@ -5,30 +5,27 @@
  */
 package utils;
 
+import static utils.FileReader.releaseResource;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableValue;
+
+import org.apache.commons.io.FileUtils;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 import logger.Logger;
 import models.DetailedLogs;
-import org.apache.commons.io.FileUtils;
-import static utils.FileReader.releaseResource;
 
 /**
  *
@@ -36,12 +33,15 @@ import static utils.FileReader.releaseResource;
  */
 public class ReadLogger {
 
-    String logFilePath;
+	List<String> listOfKeysDetailed;
+	
+	File logFile;
     List<String> fileLine;
 
-    public ReadLogger(String logFilePath) throws IOException {
-        this.logFilePath = logFilePath;
-        fileLine = FileUtils.readLines(new File(logFilePath));
+    public ReadLogger(File logFile) throws IOException {
+        this.logFile = logFile;
+        fileLine = FileUtils.readLines(logFile);
+        listOfKeysDetailed= new ArrayList<>();
     }
 
     public TreeTableView getTLeftHandSideTable() throws Exception {
@@ -81,21 +81,21 @@ public class ReadLogger {
             return outputTableview;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("not a valid type of log file" + logFilePath);
+            throw new Exception("not a valid type of log file" + logFile.getAbsolutePath());
         }
 
     }
 
-    public TableView getDetailedTable() throws Exception {
-
+    public TableView getDetailedTable() {
+        String exceptionString = "Invalid data: No Lines starts with '#.R'";
+        TableView outputTableview = new TableView();
         try {
-            TableView outputTableview = new TableView();
-            String exceptionString = "";
             boolean isException = false;
             for (String next : fileLine) {
                 Logger.info("at line: " + next);
                 String firstCheck = next.substring(0, 3);
                 if (firstCheck.equalsIgnoreCase("#.R")) {
+                	exceptionString=firstCheck;
                     //Logger.info("firstCheck: "+firstCheck);
                     String[] splitedFirst = next.split(".#.");
                     if (splitedFirst.length == 2) {
@@ -117,6 +117,11 @@ public class ReadLogger {
                             exceptionString = "split.length == 2:" + (split.length == 2);
                             isException = true;
                         }
+                        String detailedKeyString = splitedFirst[1].replace(".#", "");
+                        String[] detailedKeysArray = detailedKeyString.split("\\|");
+                        for(String key:detailedKeysArray){
+                        	listOfKeysDetailed.add(key.trim());
+                        }
                     }
                     isException = false;
                     break;
@@ -129,25 +134,23 @@ public class ReadLogger {
                 }
             }
             if (isException) {
-                throw new Exception(exceptionString);
+                MainWindowsUtils.setLeftHandErrorMsg("Errors in line"+exceptionString);
             }
-            return outputTableview;
         } catch (Exception e) {
+            MainWindowsUtils.setLeftHandErrorMsg("Errors in line"+exceptionString);
             e.printStackTrace();
-            throw new Exception("not a valid type of log file" + logFilePath);
         }
-
+        return outputTableview;
     }
 
     public Map<String, List> getMap() {
         List<String> list = new ArrayList<>();
         Map<String, List> output = new HashMap<String, List>();
-        System.out.println("utils.ReadLogger.getMap()" + logFilePath);
-        File file = new File(logFilePath);
+        System.out.println("utils.ReadLogger.getMap()" + logFile.getAbsolutePath());
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new java.io.FileReader(file));
-            Logger.info("  reading for logfile: " + file.getAbsolutePath());
+            br = new BufferedReader(new java.io.FileReader(logFile));
+            Logger.info("  reading for logfile: " + logFile.getAbsolutePath());
 
             String line = br.readLine();
             boolean isRead = false;
@@ -184,10 +187,10 @@ public class ReadLogger {
                 }
                 line = br.readLine();
             }
-            releaseResource(file, br);
+            releaseResource(logFile, br);
         } catch (IOException e) {
             e.printStackTrace();
-            releaseResource(file, br);
+            releaseResource(logFile, br);
         }
 
         return output;
@@ -210,12 +213,12 @@ public class ReadLogger {
         //TableColumn mainCol;
         String[] split = colString.split(">");
         if (split.length > 1) {
-            System.out.println("setCollumns: " + split[0]);
+            System.out.println("adding main collumn: " + split[0]);
             mainCol = new TreeTableColumn(split[0]);
             mainCol.setCellValueFactory(param -> param.getValue().getValue().getValue(split[0]));
             String[] subCols = split[1].replace("(", "").replace(")", "").split(",");
             for (String subCol : subCols) {
-                System.out.println("Adding coll: '" + subCol.trim() + "'");
+                System.out.println("Adding sub collumn: '" + subCol.trim() + "'");
                 TreeTableColumn<GenericLogModel, String> subtableCol = new TreeTableColumn<>(subCol);
                 subtableCol.setCellValueFactory(param -> param.getValue().getValue().getValue(subCol.trim()));
                 mainCol.getColumns().add(subtableCol);
@@ -227,4 +230,12 @@ public class ReadLogger {
             table.getColumns().add(mainCol);
         }
     }
+
+	public List<String> getListOfKeysDetailed() {
+		return listOfKeysDetailed;
+	}
+
+	public void setListOfKeysDetailed(List<String> listOfKeysDetailed) {
+		this.listOfKeysDetailed = listOfKeysDetailed;
+	}
 }
