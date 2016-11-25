@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import truechip.ListTestCase;
+import logger.Logger;
 
 /**
  *
@@ -46,7 +47,7 @@ public class RunThread extends Thread {
                     new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                Logger.info(line);
                 final String output=line;
                 Platform.runLater(new Runnable() {
                     @Override

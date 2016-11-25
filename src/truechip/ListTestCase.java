@@ -153,7 +153,7 @@ public class ListTestCase {
     }
 
     public BorderPane get() {
-        System.out.println("truechip.ListTestCase.get()");
+        Logger.info("truechip.ListTestCase.get()");
         if (listView == null) {
             build();
             return listView;
@@ -203,7 +203,7 @@ public class ListTestCase {
         ListView testCaseSelected = (ListView) event.getSource();
         if (testCaseSelected != null) {
             tcName = testCaseSelected.getSelectionModel().getSelectedItem().toString();
-            System.out.println("truechip.ListTestCase.tcListClick():" + tcName);
+            Logger.info("truechip.ListTestCase.tcListClick():" + tcName);
         }
     }
 
@@ -347,13 +347,13 @@ public class ListTestCase {
         try {
             ProjectData project = projects.get(projectname);
             List<String> makeFileTargets = project.getListTargets();
-            System.out.println("Size of targets: " + makeFileTargets.size());
+            Logger.info("Size of targets: " + makeFileTargets.size());
             if (makeFileTargets.size() > 0) {
                 runButton.setOnAction(this::runATestDetailed);
                 Label targetLabel = new Label("Targets: ");
                 targetComboBox.getItems().clear();
                 for (String line : makeFileTargets) {
-                    System.out.println("adding targets...");
+                    Logger.info("adding targets...");
                     targetComboBox.getItems().add(line);
                 }
                 targetComboBox.setValue(targetComboBox.getItems().get(0));

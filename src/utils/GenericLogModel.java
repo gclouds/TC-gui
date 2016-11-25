@@ -10,24 +10,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import logger.Logger;
 
 /**
  *
  * @author gauravsi
  */
 public class GenericLogModel {
-    Map<String, String> logMap=new HashMap<>();
+	HashMap<String, String> logMap=new HashMap<>();
     
-    public Map<String, String> getLogMap() {
+    public HashMap<String, String> getLogMap() {
         return logMap;
     }
 
-    public void setLogMap(Map<String, String> logMap) {
+    public void setLogMap(HashMap<String, String> logMap) {
         this.logMap = logMap;
     }
     
-    public SimpleStringProperty getValue(String key){
-        System.out.println("get map value: '"+key+"': '"+getLogMap().get(key)+"'");
+    public StringProperty getValue(String key){
+        Logger.info("get map value: '"+key+"': '"+getLogMap().get(key)+"'");
         return new SimpleStringProperty(getLogMap().get(key));
     }
 

@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,7 +22,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import logger.Logger;
 import utils.Configurations;
+import utils.RootLogger;
 
 /**
  *
@@ -37,29 +38,29 @@ public class AppMain extends Application {
         //Configurations.removePrefrences();
         if (Configurations.getWorkSpaceFilePath() == null) {
 
-            final Label labelSelectedDirectory = new Label("PLease select workspace");
+            final Label labelSelectedDirectory = new Label("Please select workspace");
 
             Button btnOpenDirectoryChooser = new Button();
             btnOpenDirectoryChooser.setText("Browse");
             btnOpenDirectoryChooser.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    System.out.println("opening workspace dialog....");
+                    Logger.info("opening workspace dialog....");
                     DirectoryChooser directoryChooser = new DirectoryChooser();
                     File selectedDirectory
                             = directoryChooser.showDialog(stage);
 
                     if (!selectedDirectory.isDirectory()) {
-                        System.out.println("false: " + selectedDirectory.getAbsolutePath());
+                        Logger.info("false: " + selectedDirectory.getAbsolutePath());
                         labelSelectedDirectory.setText("No Directory selected");
                     } else {
                         Configurations.setFilePath(selectedDirectory);
-                        System.out.println("true: " + selectedDirectory.getAbsolutePath());
+                        Logger.info("true: " + selectedDirectory.getAbsolutePath());
 
                         try {
                             start(stage);
                         } catch (Exception ex) {
-                            Logger.getLogger(AppMain.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.info(ex);
                         }
                     }
                 }
@@ -98,9 +99,12 @@ public class AppMain extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+    	boolean isConsoleAppender=false;
+    	if(args.length==1 && args[0].equalsIgnoreCase("show")){
+    		isConsoleAppender=true;
+    	}
         try {
-        	
-        	//hideConsole();
+        	RootLogger rootLogger = new RootLogger(isConsoleAppender, true);
             launch(args);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -112,16 +116,5 @@ public class AppMain extends Application {
         appmain.start(stage);
         
     }
-    
-    public static void hideConsole(){
-    	PrintStream originalStream = System.out;
 
-    	PrintStream dummyStream    = new PrintStream(new OutputStream(){
-    	    public void write(int b) {
-    	        //NO-OP
-    	    }
-    	});
-    	
-    	System.setOut(dummyStream);
-    }
 }

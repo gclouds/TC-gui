@@ -25,6 +25,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafxapplication2.pciLogUtil.PCI_LogUtil;
+import logger.Logger;
 import models.DetailedLogs;
 
 /**
@@ -58,7 +59,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
+        Logger.info("You clicked me!");
         label.setText("Hello World!");
     }
 
@@ -90,7 +91,7 @@ public class FXMLDocumentController implements Initializable {
         }else{
             mainGridPane.setVisible(false);
         }
-        System.out.println("hi.........." + selectedItem);
+        Logger.info("hi.........." + selectedItem);
     }
 
     @FXML

@@ -31,6 +31,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import logger.Logger;
+
 import javax.swing.filechooser.FileNameExtensionFilter;
 import models.TestDataModel;
 import utils.Configurations;
@@ -61,7 +63,8 @@ public class RegressionTestCase {
     }
 
     public void build() {
-        System.out.println("truechip.ListTestCase.build()");
+        Logger.info("truechip.ListTestCase.build()");
+        //Logger.info("truechip.ListTestCase.build()");
         // Create the TreeView
         treeView = new TreeView();
 
@@ -70,15 +73,15 @@ public class RegressionTestCase {
         treeView.setShowRoot(false);
 
         File file = new File(outputfolder);
-        System.out.println("truechip.ListTestCase.build() path searching: " + file.getAbsolutePath());
+        Logger.info("truechip.ListTestCase.build() path searching: " + file.getAbsolutePath());
         String[] names = file.list();
-        System.out.println("truechip.ListTestCase.build() path size: " + names.length);
+        Logger.info("truechip.ListTestCase.build() path size: " + names.length);
 
         for (String name : names) {
-            System.out.println(outputfolder + File.separator + name);
+            Logger.info(outputfolder + File.separator + name);
 
             if (new File(outputfolder + File.separator + name).isDirectory()) {
-                System.out.println(name);
+                Logger.info(name);
                 TreeItem project = new TreeItem(name);
                 rootItem.getChildren().add(project);
                 project.getChildren().clear();
@@ -132,7 +135,7 @@ public class RegressionTestCase {
     }
 
     public BorderPane get() {
-        System.out.println("truechip.ListTestCase.get()");
+        Logger.info("truechip.ListTestCase.get()");
         if (listView == null) {
             build();
             return listView;
@@ -145,13 +148,13 @@ public class RegressionTestCase {
     public List<String> getAllTestCases(String folderName) {
         List output = new ArrayList<String>();
         String fullPath = outputfolder + File.separator + folderName + File.separator + "sim";
-        System.out.println("truechip.ListTestCase.getAllTestCases()" + fullPath);
+        Logger.info("truechip.ListTestCase.getAllTestCases()" + fullPath);
         File file = new File(fullPath);
         FileNameExtensionFilter filter = new FileNameExtensionFilter("text only", "txt");
         File[] listFiles = file.listFiles(new FIleFilter("txt"));
         for (File names : listFiles) {
             output.add(names.getName());
-            System.out.println("truechip.ListTestCase.getAllTestCases():" + names.getName());
+            Logger.info("truechip.ListTestCase.getAllTestCases():" + names.getName());
         }
 
         return output;
@@ -170,19 +173,19 @@ public class RegressionTestCase {
             makeFilePath = outputfolder + File.separator + item.getParent().getValue() + SystemConstants.defaultMakeFilePath;
             File testcaseFile = new File(fullPath);
             File makeFile = new File(makeFilePath);
-            System.out.println("truechip.ListTestCase.mylistclick()" + fullPath);
+            Logger.info("truechip.ListTestCase.mylistclick()" + fullPath);
             List<String> readLines = FileReader.readLines(fullPath);
             centerListView.getItems().clear();
             centerListView.getItems().addAll(readLines);
             //adding targets
             List<String> readMakeFileTargets = FileReader.readMakeFileTargets(makeFilePath);
-            System.out.println("size of targets: " + readMakeFileTargets);
+            Logger.info("size of targets: " + readMakeFileTargets);
             targetComboBox = new ComboBox();
             Button runButton = new Button("Run");
             runButton.setOnAction(this::runATestDetailed);
             Label targetLabel = new Label("Targets: ");
             for (String line : readMakeFileTargets) {
-                System.out.println("adding targets...");
+                Logger.info("adding targets...");
                 targetComboBox.getItems().add(line);
 
             }
@@ -194,15 +197,15 @@ public class RegressionTestCase {
 
             List<String> readMakeFileArg = FileReader.readMakeFileArg(makeFilePath);
             List<TestDataModel> rowDataList = new ArrayList<TestDataModel>();
-            System.out.println("adding test data...." + readMakeFileArg.size());
+            Logger.info("adding test data...." + readMakeFileArg.size());
             Iterator<String> iterator = readMakeFileArg.iterator();
             while (iterator.hasNext()) {
                 String line = iterator.next();
-                //System.out.println(line.split("\\?=")[0].trim() + " data...." + line.split("\\?=")[1].trim());
+                //Logger.info(line.split("\\?=")[0].trim() + " data...." + line.split("\\?=")[1].trim());
                 Label label1 = new Label(line.split("\\?=")[0].trim());
                 TextField textField = new TextField();
                 textField.setId(line.split("\\?=")[0].trim());
-                //System.out.println("Argumtents: "+textField.getId());
+                //Logger.info("Argumtents: "+textField.getId());
                 //textField.setText(line.split("\\?=")[1].trim());
                 HBox hb = new HBox();
                 hb.getChildren().addAll(label1, textField);
@@ -210,7 +213,7 @@ public class RegressionTestCase {
                 rightVBox.getChildren().add(hb);
             }
 
-            System.out.println("adding test rowDataList...." + rowDataList.size());
+            Logger.info("adding test rowDataList...." + rowDataList.size());
             ScrollPane sp = new ScrollPane();
             sp.setContent(rightVBox);
             VBox.setVgrow(sp, Priority.ALWAYS);
@@ -238,13 +241,13 @@ public class RegressionTestCase {
     private void tcListClick(MouseEvent event) {
         ListView listView = (ListView) event.getSource();
         tcName = listView.getSelectionModel().getSelectedItem().toString();
-        System.out.println("truechip.ListTestCase.tcListClick():" + tcName);
+        Logger.info("truechip.ListTestCase.tcListClick():" + tcName);
 
     }
 
     @FXML
     private void runATest(ActionEvent event) {
-        System.out.println("truechip.ListTestCase.runATest()");
+        Logger.info("truechip.ListTestCase.runATest()");
         runTest(true);
 
     }
@@ -252,7 +255,7 @@ public class RegressionTestCase {
     @FXML
     private void runATestDetailed(ActionEvent event) {
         if (tcName != null) {
-            System.out.println("truechip.ListTestCase.runATestDetailed(): " + tcName);
+            Logger.info("truechip.ListTestCase.runATestDetailed(): " + tcName);
             runTest(false);
         } else {
             consoleLog.appendText("\nplease select a test case!!! ");
@@ -281,9 +284,9 @@ public class RegressionTestCase {
             Iterator<String> iterator = readMakeFileArg.iterator();
             while (iterator.hasNext()) {
                 String line = iterator.next();
-                System.out.println(line.split("\\?=")[0].trim() + " data...." + line.split("\\?=")[1].trim());
+                Logger.info(line.split("\\?=")[0].trim() + " data...." + line.split("\\?=")[1].trim());
                 TextField lookup = (TextField) rightVBox.lookup("#" + line.split("\\?=")[0].trim());
-                //System.out.println(">>>>>>>>>>>>>>>>>>>>>>.." + lookup.getText().trim().equalsIgnoreCase(""));
+                //Logger.info(">>>>>>>>>>>>>>>>>>>>>>.." + lookup.getText().trim().equalsIgnoreCase(""));
                 if (!lookup.getText().trim().equalsIgnoreCase("")) {
                     // command = command + " " + line.split("\\?=")[0].trim() + "=" + lookup.getText();
                     command = command + " " + lookup.getId() + "=" + lookup.getText();
@@ -293,7 +296,7 @@ public class RegressionTestCase {
         }
         consoleLog.appendText("\nrunning command: " + command);
         try {
-            System.out.println("dir: " + makeFileDir.getAbsolutePath());
+            Logger.info("dir: " + makeFileDir.getAbsolutePath());
             RunCommand.exeCommand(command, makeFileDir,consoleLog);
 
         } catch (Exception e) {
@@ -303,7 +306,7 @@ public class RegressionTestCase {
 //        RunCommand.exeCommand("cd " + outputfolder);
 //        RunCommand.exeCommand("ipconfig");
 //        RunCommand.exeCommand("dir");
-        System.out.println("truechip.ListTestCase.runATestDetailed()");
+        Logger.info("truechip.ListTestCase.runATestDetailed()");
 
     }
 }

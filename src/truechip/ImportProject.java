@@ -19,6 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafxapplication2.pciLogUtil.PCI_LogUtil;
+import logger.Logger;
 import net.lingala.zip4j.core.ZipFile;
 import utils.Configurations;
 import utils.UnzipUtility;
@@ -37,7 +38,7 @@ public class ImportProject {
     }
 
     public static BorderPane get() {
-        System.out.println("truechip.ListTestCase.get()");
+        Logger.info("truechip.ListTestCase.get()");
         if (projectList == null) {
             build();
             return projectList;
@@ -100,7 +101,7 @@ public class ImportProject {
         byte[] buffer = new byte[1024];
 
         try {
-            System.out.println("truechip.ImportProject.unZipIt()" + Configurations.getWorkSpaceFilePath().getParent());
+            Logger.info("truechip.ImportProject.unZipIt()" + Configurations.getWorkSpaceFilePath().getParent());
             //create output directory is not exists
             File folder = new File(Configurations.getWorkSpaceFilePath().getParent());
             if (!folder.exists()) {
@@ -118,7 +119,7 @@ public class ImportProject {
                 String fileName = ze.getName();
                 File newFile = new File(folder + File.separator + fileName);
 
-                System.out.println("file unzip : " + newFile.getAbsoluteFile());
+                Logger.info("file unzip : " + newFile.getAbsoluteFile());
 
                 //create all non exists folders
                 //else you will hit FileNotFoundException for compressed folder
@@ -138,7 +139,7 @@ public class ImportProject {
             zis.closeEntry();
             zis.close();
 
-            System.out.println("Done");
+            Logger.info("Done");
 
         } catch (IOException ex) {
             ex.printStackTrace();

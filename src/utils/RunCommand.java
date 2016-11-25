@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import javafx.scene.control.TextArea;
 import truechip.ListTestCase;
+import logger.Logger;
 
 /**
  *
@@ -69,7 +70,7 @@ public class RunCommand {
             exitVal = proc.waitFor();
             consoleLog.appendText("\n Output: " + output.message + "\nError: " + error.message);
 
-            System.out.println("Output: " + output.message + "\nError: " + error.message);
+            Logger.info("Output: " + output.message + "\nError: " + error.message);
         } catch (IOException e) {
             e.printStackTrace();
             consoleLog.appendText("\n" + e.getMessage());

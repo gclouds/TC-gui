@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.TreeItem;
+import logger.Logger;
 
 /**
  *
@@ -23,14 +24,14 @@ public class LogModel {
 	List<String> lines;
 	Map<String, Object> logMap;
 	Map<String, String> header;
-	Map<String, String> rootLogMap;
+	HashMap<String, String> rootLogMap;
 	GenericLogModel rootModel;
 	List<GenericLogModel> listModels;
 	TreeItem<LogModel> root;
 
 	public LogModel(File file) {
 		this.lines = FileReader.readLinesForLogger(file);
-		System.out.println("utils.LogModel.<init>() size of lines: " + lines.size());
+		Logger.info("utils.LogModel.<init>() size of lines: " + lines.size());
 		root = new TreeItem<LogModel>();
 		setLogMap();
 	}
@@ -75,7 +76,7 @@ public class LogModel {
 				header = new HashMap<String, String>();
 				rootLogMap = new HashMap();
 				next = next.substring(next.indexOf("|") + 1);
-				System.out.println("lock hogaya: " + next);
+				Logger.info("lock hogaya: " + next);
 
 				List<String> list = new ArrayList<>();
 				String[] split = next.split("\\|");
@@ -87,10 +88,10 @@ public class LogModel {
 					header.put(i + "", list.get(i).trim());
 					rootLogMap.put(list.get(i).trim(), "-");
 				}
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+header);
-				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+rootLogMap);
+				Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+header);
+				Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+rootLogMap);
 			} else {
-				// System.out.println("next: " + next);
+				// Logger.info("next: " + next);
 				try {
 					List<String> lineArray = new ArrayList<>();
 					String[] split = next.split("\\|");
@@ -108,13 +109,13 @@ public class LogModel {
 						listFirstNode.add(lineArray);
 					}
 				} catch (Exception e) {
-					System.out.println("next-error: " + next);
-					System.out.println("listout: " + listout.size());
+					Logger.info("next-error: " + next);
+					Logger.info("listout: " + listout.size());
 					// e.printStackTrace();
 				}
 			}
 		}
-		System.out.println("listout: " + listout.size());
+		Logger.info("listout: " + listout.size());
 		buildLogModel(listout);
 	}
 
@@ -128,8 +129,8 @@ public class LogModel {
 		for (int i = 0; i < listout.size(); i++) {
 
 			List<List<String>> rowLog = listout.get(i);
-			System.out.println("rowLog: " + rowLog);
-			System.out.println("header: " + header);
+			Logger.info("rowLog: " + rowLog);
+			Logger.info("header: " + header);
 
 			GenericLogModel model = new GenericLogModel();
 			Map<String, String> rootMap = model.getLogMap();
@@ -138,19 +139,19 @@ public class LogModel {
 				List<String> collumn = rowLog.get(j);
 				String firstCol = collumn.get(0).trim();
 				collumn.remove(0);
-				System.out.println("firstCol:" + firstCol);
+				Logger.info("firstCol:" + firstCol);
 				int firstId = 1;
 				// collumn = collumn.subList(1, collumn.size() - 1);
 				if (firstCol.equalsIgnoreCase("1")) {
 					for (int k = 0; k < collumn.size(); k++) {
 						rootMap.put(header.get("" + k), collumn.get(k).trim());
-						// System.out.println("key: " + header.get("" + k) + ",
+						// Logger.info("key: " + header.get("" + k) + ",
 						// value: " + collumn.get(k).trim());
 					}
 				} else if (firstCol.equalsIgnoreCase("0")) {
 					for (int k = 0; k < collumn.size(); k++) {
 						rootMap.put(header.get("" + k), collumn.get(k).trim());
-						// System.out.println("key: " + header.get("" + k) + ",
+						// Logger.info("key: " + header.get("" + k) + ",
 						// value: " + collumn.get(k).trim());
 					}
 					model.setHasChild(false);
@@ -160,7 +161,7 @@ public class LogModel {
 					Map<String, String> childMap = childModel.getLogMap();
 					for (int k = 0; k < collumn.size(); k++) {
 						childMap.put(header.get("" + k), collumn.get(k).trim());
-						// System.out.println("key: " + header.get("" + k) + ",
+						// Logger.info("key: " + header.get("" + k) + ",
 						// value: " + collumn.get(k).trim());
 						firstId++;
 					}
@@ -171,18 +172,18 @@ public class LogModel {
 						Map<String, String> childMap = secondChildModel.getLogMap();
 						for (int k = 0; k < collumn.size(); k++) {
 							childMap.put(header.get("" + k), collumn.get(k).trim());
-							// System.out.println("key: " + header.get("" + k) +
+							// Logger.info("key: " + header.get("" + k) +
 							// ", value: " + collumn.get(k).trim());
 							firstId++;
 						}
 						model.addChild(secondChildModel);
 					} else if (firstCol.contains("1.2.")) {
-						System.out.println(">>>>>>>>>>>>> 1.2.  " + firstCol);
+						Logger.info(">>>>>>>>>>>>> 1.2.  " + firstCol);
 						GenericLogModel childChildModel = new GenericLogModel();
 						Map<String, String> childMap = childChildModel.getLogMap();
 						for (int k = 0; k < collumn.size(); k++) {
 							childMap.put(header.get("" + k), collumn.get(k).trim());
-							// System.out.println("key: " + header.get("" + k) +
+							// Logger.info("key: " + header.get("" + k) +
 							// ", value: " + collumn.get(k).trim());
 							firstId++;
 						}
@@ -204,8 +205,8 @@ public class LogModel {
 		for (int i = 0; i < listout.size(); i++) {
 
 			List<List<String>> rowLog = listout.get(i);
-			System.out.println("rowLog: " + rowLog);
-			System.out.println("header: " + header);
+			Logger.info("rowLog: " + rowLog);
+			Logger.info("header: " + header);
 
 			GenericLogModel model = new GenericLogModel();
 			Map<String, String> rootMap = model.getLogMap();
@@ -214,19 +215,19 @@ public class LogModel {
 				List<String> collumn = rowLog.get(j);
 				String firstCol = collumn.get(0).trim();
 				collumn.remove(0);
-				System.out.println("firstCol:" + firstCol);
+				Logger.info("firstCol:" + firstCol);
 				int firstId = 1;
 				// collumn = collumn.subList(1, collumn.size() - 1);
 				if (firstCol.equalsIgnoreCase("1")) {
 					for (int k = 0; k < collumn.size(); k++) {
 						rootMap.put(header.get("" + k), collumn.get(k).trim());
-						// System.out.println("key: " + header.get("" + k) + ",
+						// Logger.info("key: " + header.get("" + k) + ",
 						// value: " + collumn.get(k).trim());
 					}
 				} else if (firstCol.equalsIgnoreCase("0")) {
 					for (int k = 0; k < collumn.size(); k++) {
 						rootMap.put(header.get("" + k), collumn.get(k).trim());
-						// System.out.println("key: " + header.get("" + k) + ",
+						// Logger.info("key: " + header.get("" + k) + ",
 						// value: " + collumn.get(k).trim());
 					}
 					model.setHasChild(false);
@@ -236,7 +237,7 @@ public class LogModel {
 					Map<String, String> childMap = childModel.getLogMap();
 					for (int k = 0; k < collumn.size(); k++) {
 						childMap.put(header.get("" + k), collumn.get(k).trim());
-						// System.out.println("key: " + header.get("" + k) + ",
+						// Logger.info("key: " + header.get("" + k) + ",
 						// value: " + collumn.get(k).trim());
 						firstId++;
 					}
@@ -247,18 +248,18 @@ public class LogModel {
 						Map<String, String> childMap = secondChildModel.getLogMap();
 						for (int k = 0; k < collumn.size(); k++) {
 							childMap.put(header.get("" + k), collumn.get(k).trim());
-							// System.out.println("key: " + header.get("" + k) +
+							// Logger.info("key: " + header.get("" + k) +
 							// ", value: " + collumn.get(k).trim());
 							firstId++;
 						}
 						model.addChild(secondChildModel);
 					} else if (firstCol.contains("1.2.")) {
-						System.out.println(">>>>>>>>>>>>> 1.2.  " + firstCol);
+						Logger.info(">>>>>>>>>>>>> 1.2.  " + firstCol);
 						GenericLogModel childChildModel = new GenericLogModel();
 						Map<String, String> childMap = childChildModel.getLogMap();
 						for (int k = 0; k < collumn.size(); k++) {
 							childMap.put(header.get("" + k), collumn.get(k).trim());
-							// System.out.println("key: " + header.get("" + k) +
+							// Logger.info("key: " + header.get("" + k) +
 							// ", value: " + collumn.get(k).trim());
 							firstId++;
 						}

@@ -1,6 +1,5 @@
 package logger;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,9 +9,13 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import constants.Matcher;
+import constants.SystemConstants;
+import numbersystem.Convertor;
+import utils.NumberSystemUtils;
 import utils.StringComparator;
 
 public class SuperLoggger {
+	public final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
 
 	List<String[]> list;
 
@@ -28,15 +31,14 @@ public class SuperLoggger {
 		boolean reset = false;
 		DataList dataList = null;
 		for (String[] lineArray : list) {
-			System.out.print("checking line: ");
-			System.out.println(Arrays.toString( lineArray));
+			Logger.info("checking line: "+lineArray);
 			String currentString = lineArray[0].trim();
 			if (StringUtils.containsIgnoreCase("row", currentString)) {
 				listDataList = new ArrayList<>();
 
 				Map<String, String> arrayList = toArrayList(lineArray);
 				fullData.put("header", arrayList);
-				System.out.println("end in row check");
+				Logger.info("end in row check");
 				continue;
 			}
 			if (reset) {
@@ -44,17 +46,17 @@ public class SuperLoggger {
 				listDataList.add(dataList);
 				dataList.setCurrentString(currentString);
 				reset = false;
-				System.out.println("end in first reset");
+				Logger.info("end in first reset");
 				continue;
 			}
-			if(lineArray.length==1){
-				reset=true;
-				System.out.println("end in Arrays.toString(lineArray).contains)"+lineArray.length);
+			if (lineArray.length == 1) {
+				reset = true;
+				Logger.info("end in Arrays.toString(lineArray).contains)" + lineArray.length);
 				continue;
 			}
 			if (!reset) {
-				dataList=logic(dataList, lineArray, currentString);
-				System.out.println("end in !reset");
+				dataList = logic(dataList, lineArray, currentString);
+				Logger.info("end in !reset");
 
 			}
 
@@ -62,7 +64,6 @@ public class SuperLoggger {
 		fullData.put("data", listDataList);
 		return fullData;
 	}
-
 
 	private DataList logic(DataList mainDataList, String[] currentData, String currentString) throws Exception {
 		Matcher findMatch = StringComparator.findMatch(mainDataList.getCurrentString(), currentString);
@@ -80,30 +81,98 @@ public class SuperLoggger {
 			currentDataList.setParent(mainDataList);
 			return currentDataList;
 		}
-		
+
 		return mainDataList;
 	}
 
-	Map<String,String> toArrayList(String[] stringArray) {
-		
-		Map<String,String> output = new HashMap<>();
-		//List<String> output = new ArrayList<>();
-		for (int i=0;i<stringArray.length;i++) {
+	Map<String, String> toArrayList(String[] stringArray) {
+
+		Map<String, String> output = new HashMap<>();
+		// List<String> output = new ArrayList<>();
+		for (int i = 0; i < stringArray.length; i++) {
 			output.put(Integer.toString(i), stringArray[i].trim());
-			//output.add(string);
+			// output.add(string);
 		}
 		return output;
 	}
 
-	Map<String,String> generateDataMap(String[] stringArray) throws Exception{
-		Map<String,String> output = new HashMap<>();
-		Map<String,String> header =  (Map<String, String>) fullData.get("header");
-		System.out.println("size of header: "+header.size());
-		System.out.println("size of data row: "+stringArray.length);
-		for(int i=0;i<stringArray.length;i++){
-			output.put(header.get(Integer.toString(i)), stringArray[i].trim());
+	HashMap<String, String> generateDataMap(String[] stringArray) throws Exception {
+		HashMap<String, String> output = new HashMap<>();
+		Map<String, String> header = (HashMap<String, String>) fullData.get("header");
+		Logger.info("size of header: " + header.size());
+		Logger.info("size of data row: " + stringArray.length);
+		for (int i = 0; i < stringArray.length; i++) {
+			String key = header.get(Integer.toString(i));
+			Object keyUnit = getKeyUnit(key);
+			String value = stringArray[i].trim();
+
+			if (keyUnit instanceof String) {
+				if (StringComparator.validString(value))
+					output.put((String) keyUnit, value);
+				else
+					output.put((String) keyUnit, "-");
+			} else if (keyUnit instanceof Map) {
+				Map<String, String> keyUnitMap = (Map<String, String>) keyUnit;
+				if (StringComparator.validString(value)) {
+					output.put(keyUnitMap.get("name"),
+							keyUnitMap.get("size") + getValue(keyUnitMap.get("unit"), value));
+				} else {
+					output.put(keyUnitMap.get("name"), "-");
+				}
+
+			} else {
+				output.put(key.trim(), value);
+			}
 		}
 		return output;
 	}
 
+	public static String getValue(String columnHeader, String value) throws Exception {
+		if (columnHeader.equalsIgnoreCase("d")) {
+			Convertor convertor = NumberSystemUtils.getDecConvertor();
+			value = SystemConstants.toValue.getPrefix() + SystemConstants.toValue.getConvertedValue(convertor, value);
+		} else if (columnHeader.equalsIgnoreCase("h")) {
+			Convertor convertor = NumberSystemUtils.getHexConvertor();
+			value = SystemConstants.toValue.getPrefix() + SystemConstants.toValue.getConvertedValue(convertor, value);
+		} else if (columnHeader.equalsIgnoreCase("o")) {
+			Convertor convertor = NumberSystemUtils.getOctConvertor();
+			value = SystemConstants.toValue.getPrefix() + SystemConstants.toValue.getConvertedValue(convertor, value);
+		} else if (columnHeader.equalsIgnoreCase("b")) {
+			Convertor convertor = NumberSystemUtils.getBinConvertor();
+			value = SystemConstants.toValue.getPrefix() + SystemConstants.toValue.getConvertedValue(convertor, value);
+		}
+		return value;
+	}
+
+	public static void info(String msg) {
+		logger.info(msg);
+	}
+
+	public static void info(Object msg) {
+		logger.info(msg);
+	}
+
+	public static void error(String msg) {
+		logger.error(msg);
+	}
+
+	public static void error(Object msg) {
+		logger.error(msg);
+	}
+
+	private static Object getKeyUnit(String key) {
+		if (key.contains("{") && key.contains("}")) {
+			String str = key.substring(key.indexOf("{") + 1, key.indexOf("}"));
+			if (str.contains("'")) {
+				Map<String, String> map = new HashMap();
+				map.put("size", str.split("'")[0]);
+				map.put("unit", str.split("'")[1]);
+				map.put("name", key.substring(0, key.indexOf("{")));
+				return map;
+			}
+			Logger.info("condition: " + str.contains("'"));
+			Logger.info("unit: >> " + str);
+		}
+		return key.trim();
+	}
 }

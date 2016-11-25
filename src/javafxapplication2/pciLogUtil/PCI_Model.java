@@ -7,6 +7,7 @@ package javafxapplication2.pciLogUtil;
 
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
+import logger.Logger;
 import models.PCI_Request_LogModel;
 
 public class PCI_Model {
@@ -22,7 +23,7 @@ public class PCI_Model {
     public String[] completionLine;
 
     public PCI_Model(PCI_Request_LogModel logModel,int index) {
-        System.out.println("PCI_Model:constructor()"+index);
+        Logger.info("PCI_Model:constructor()"+index);
         requestLine=logModel.getRequestLine(index);
         completionLine=logModel.getCompletionLine(index);
         requestTl = new SimpleStringProperty(catchNull(logModel.getRequestLine(index),PCI_Constants_Req.TypeOfTransaction.getIndex()));
@@ -84,7 +85,7 @@ public class PCI_Model {
         try{
             return array[indexOfValue];
         }catch(Exception e){
-            System.out.println("Error PCI_Model:catchNull() at index: "+indexOfValue);
+            Logger.info("Error PCI_Model:catchNull() at index: "+indexOfValue);
             return "-";
         }
     }

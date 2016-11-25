@@ -34,7 +34,7 @@
                         <MenuItem fx:id="file_exit" mnemonicParsing="false" text="Quit" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Units">
+                <Menu fx:id="file_units" mnemonicParsing="false" text="Units">
                     <items>
                         <Menu mnemonicParsing="false" text="Time Scale">
                             <items> 
@@ -44,12 +44,12 @@
                                 <MenuItem mnemonicParsing="false" text="Undo" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Values">
+                        <Menu mnemonicParsing="false" text="Values" onAction="#unitsMenuSelected">
                             <items> 
-                                <MenuItem mnemonicParsing="false" text="Undo" />
-                                <MenuItem mnemonicParsing="false" text="Undo" />
-                                <MenuItem mnemonicParsing="false" text="Undo" />
-                                <MenuItem mnemonicParsing="false" text="Undo" />
+                                <MenuItem fx:id="file_units_hex" mnemonicParsing="false" text="Hexadecimal" />
+                                <MenuItem fx:id="file_units_dec" mnemonicParsing="false" text="Decimal" />
+                                <MenuItem fx:id="file_units_bin" mnemonicParsing="false" text="Binary" />
+                                <MenuItem fx:id="file_units_oct" mnemonicParsing="false" text="Octal" />
                             </items>
                         </Menu>
                     </items>

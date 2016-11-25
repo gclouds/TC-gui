@@ -28,6 +28,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import logger.Logger;
 import models.DetailedLogs;
 import models.PCI_Request_LogModel;
 import org.apache.commons.io.FileUtils;
@@ -66,7 +67,7 @@ public class PCI_LogUtil {
     }
 
     public void showLog(GridPane mainAnchorPane, Double margin) {
-        System.out.println("PCI_LogUtil>>showLog started: "+model.size);
+        Logger.info("PCI_LogUtil>>showLog started: "+model.size);
 
         table.setEditable(true);
 
@@ -100,10 +101,10 @@ public class PCI_LogUtil {
         
         ObservableList<PCI_Model> data = table.getItems();
         
-        System.out.println("PCI_LogUtil>>showLog adding model: "+model.size);
+        Logger.info("PCI_LogUtil>>showLog adding model: "+model.size);
 
         for(int i=1;i<model.size;i++){
-            System.out.println(">>adding items: "+i);
+            Logger.info(">>adding items: "+i);
             data.add(new PCI_Model(model, i));
         }
         
@@ -132,7 +133,7 @@ public class PCI_LogUtil {
                 String[] lineSplit = line.split("&");
                 requestLine.add(lineSplit[0].split("\\|"));
                 completionLine.add(lineSplit[1].split("\\|"));
-                System.out.println("line size busffer array: "+lineSplit.length+">"+requestLine.size()+">"+completionLine.size());
+                Logger.info("line size busffer array: "+lineSplit.length+">"+requestLine.size()+">"+completionLine.size());
                 line = br.readLine();
             }
         } catch (IOException e) {
@@ -144,7 +145,7 @@ public class PCI_LogUtil {
     @FXML
     private void mylistclicked(MouseEvent event) {
         PCI_Model selectedItems = (PCI_Model) table.getSelectionModel().getSelectedItem();
-        System.out.println("Adding detailed table row.........."+selectedItems.getRequestTl());
+        Logger.info("Adding detailed table row.........."+selectedItems.getRequestTl());
         
         ObservableList allData = detailedLogReport.getItems();
         allData.clear();

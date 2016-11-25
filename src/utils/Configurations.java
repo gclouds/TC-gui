@@ -9,11 +9,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.Preferences;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import constants.ToValue;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import logger.Logger;
 import models.ConfigWrapper;
 
@@ -23,6 +26,7 @@ import models.ConfigWrapper;
  */
 public class Configurations {
 
+	private static ToValue globalValueType=ToValue.TO_DEC; 
     /**
      * Returns the person file preference, i.e. the file that was last opened.
      * The preference is read from the OS specific registry. If no such
@@ -131,4 +135,12 @@ public class Configurations {
             alert.showAndWait();
         }
     }
+
+/*	public static Values getGlobalValueType() {
+		return globalValueType;
+	}
+
+	public static void setGlobalValueType(Values globalValueType) {
+		Configurations.globalValueType = globalValueType;
+	}*/
 }

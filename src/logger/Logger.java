@@ -7,6 +7,7 @@ package logger;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,7 @@ import utils.FileReader;
  */
 public class Logger extends SuperLoggger {
 	
-	
-	private Map<String, String> headerMap;
+	private HashMap<String, String> headerMap;
 	private List<DataList> leftSideTable;
 	
     public Logger(List<String[]> list) throws Exception {
@@ -28,23 +28,21 @@ public class Logger extends SuperLoggger {
 		
 		Map<String, Object> generateTableData = super.generateTableData();
 		
-		headerMap = (Map<String, String>) generateTableData.get("header");
+		headerMap = (HashMap<String, String>) generateTableData.get("header");
 		leftSideTable = (List<DataList>) generateTableData.get("data");
 		
 	}
     
 
-	public static void info(String msg){
-        System.out.println(msg);
-    }
+	
 
 
-	public Map<String, String> getHeaderMap() {
+	public HashMap<String, String> getHeaderMap() {
 		return headerMap;
 	}
 
 
-	public void setHeaderMap(Map<String, String> headerMap) {
+	public void setHeaderMap(HashMap<String, String> headerMap) {
 		this.headerMap = headerMap;
 	}
 
@@ -75,13 +73,12 @@ public class Logger extends SuperLoggger {
 			}
 		}
 		return output;
-		
 	}
 	
 	private static void print(String[] toPrint){
 		
 		for(String str:toPrint){
-			System.out.println(str);
+			Logger.info(str);
 		}
 		
 	}

@@ -39,7 +39,7 @@ public class FileReader {
             br = new BufferedReader(new java.io.FileReader(file));
 
             String line = br.readLine();
-            System.out.println("line size readLines array: " + readLines.size());
+            Logger.info("line size readLines array: " + readLines.size());
 
             while (line != null) {
                 line = br.readLine();
@@ -61,12 +61,12 @@ public class FileReader {
             br = new BufferedReader(new java.io.FileReader(file));
 
             String line = br.readLine();
-            System.out.println("line size readLines array: " + readLines.size());
+            Logger.info("line size readLines array: " + readLines.size());
 
             while (line != null) {
                 if(line.length()>5 && line.startsWith("|")){
                     readLines.add(line);
-                    //System.out.println("adding lines: "+line);
+                    //Logger.info("adding lines: "+line);
                 }
                 line = br.readLine();
             }
@@ -91,29 +91,29 @@ public class FileReader {
             boolean isRead = false;
             while (line != null) {
                 try {
-                    //System.out.println("  reading for targets>>> " + line);
+                    //Logger.info("  reading for targets>>> " + line);
 
                     if (line.length() > 0) {
                         if (line.contains("-target-start")) {
-                            System.out.println("found #@@@-target-start");
+                            Logger.info("found #@@@-target-start");
                             isRead = true;
                             line = br.readLine();
                             continue;
                         }
-                        System.out.println("isRead  >> " + isRead + " == " + line);
+                        Logger.info("isRead  >> " + isRead + " == " + line);
                         if (isRead) {
                             line = line.substring(1);
-                            System.out.println("Adding targtes == " + line);
+                            Logger.info("Adding targtes == " + line);
                             return Arrays.asList(line.trim().split(" "));
                         }
                         if (line.contains("-target-end")) {
-                            System.out.println("found #@@@-target-end");
+                            Logger.info("found #@@@-target-end");
                             isRead = false;
                             break;
                         }
                     }
                 } catch (NullPointerException e) {
-                    System.out.println("NullPointerException: " + line);
+                    Logger.info("NullPointerException: " + line);
                     //e.printStackTrace();
                 }
                 line = br.readLine();
@@ -143,26 +143,25 @@ public class FileReader {
                 line = br.readLine();
 
                 try {
-                    //System.out.println(line + "  checking line>>> " + line.length());
                     if (line.length() > 0) {
                         if (line.contains("#@@@-switiches-start")) {
-                            System.out.println("found #@@@-switiches-start");
+                            Logger.info("found #@@@-switiches-start");
                             isRead = true;
                             continue;
                         }
                         if (isRead && line.contains("?=")) {
-                            System.out.println("adding switiches >> " + line);
+                            Logger.info("adding switiches >> " + line);
                             readLines.add(line);
                         }
                         if (line.contains("#@@@-swithches-end")) {
-                            System.out.println("found @@@-swithches-end");
+                            Logger.info("found @@@-swithches-end");
                             isRead = false;
                             break;
                         }
 
                     }
                 } catch (NullPointerException e) {
-                    System.out.println("NullPointerException: " + line);
+                    Logger.info("NullPointerException: " + line);
                     //e.printStackTrace();
                 }
             }

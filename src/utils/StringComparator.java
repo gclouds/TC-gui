@@ -19,4 +19,10 @@ public class StringComparator {
 		throw new Exception("Does not any string!!!");
 	}
 
+	public static boolean validString(String str){
+		if(str !=null && !str.contains("-") && str.length()>0)
+			return true;
+		else
+			return false;
+	}
 }

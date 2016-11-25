@@ -1,16 +1,17 @@
 package logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DataList {
 
-	public DataList(Map<String, String> data) {
+	public DataList(HashMap<String, String> data) {
 		this.data = data;
 	}
 
-	private Map<String, String> data;
+	private HashMap<String, String> data;
 	private String currentString;
 	private List<DataList> child = new ArrayList<>();
 	private DataList parent = null;
@@ -26,11 +27,11 @@ public class DataList {
 		return !(child.isEmpty());
 	}
 
-	public Map<String, String> getData() {
+	public HashMap<String, String> getData() {
 		return data;
 	}
 
-	public void setData(Map<String, String> data) {
+	public void setData(HashMap<String, String> data) {
 		this.data = data;
 	}
 

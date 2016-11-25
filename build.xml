@@ -3,7 +3,8 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="TrueChipGUI">
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="TrueChipGUI">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../.metadata/.plugins/org.eclipse.pde.core/.bundle_pool"/>
     <property name="debuglevel" value="source,lines,vars"/>
