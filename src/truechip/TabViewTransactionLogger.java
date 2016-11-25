@@ -70,6 +70,7 @@ public class TabViewTransactionLogger {
 		newLogTab.setContent(newLoggerView.getNode());
 		newLoggerView.refreshLogViewer(logFile);
 		rootTab.getTabs().add(newLogTab);
+		rootTab.selectionModelProperty().get().select(newLogTab);
 	}
 
 
