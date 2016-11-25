@@ -68,8 +68,6 @@ public class TransactionLogger {
 	ComboBox targetComboBox = new ComboBox();
 	Thread thread;
 	MainPageController mainController;
-	Map<String, ProjectData> projects;
-
 	public TransactionLogger(MainPageController mainController) {
 		this.mainController = mainController;
 		this.mainContainer = mainController.mainContainer;

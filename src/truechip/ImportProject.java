@@ -11,16 +11,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafxapplication2.pciLogUtil.PCI_LogUtil;
 import logger.Logger;
-import net.lingala.zip4j.core.ZipFile;
 import utils.Configurations;
 import utils.UnzipUtility;
 
