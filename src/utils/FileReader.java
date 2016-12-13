@@ -6,6 +6,8 @@
 package utils;
 
 import constants.SystemConstants;
+import javafx.application.Application;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,6 +31,7 @@ import org.apache.commons.io.FileUtils;
  * @author gauravsi
  */
 public class FileReader {
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(FileReader.class);
 
     public static List<String> readLines(String pathname) {
         File file = new File(pathname);
@@ -47,7 +50,7 @@ public class FileReader {
             releaseResource(file, br);
             return readLines;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
             releaseResource(file, br);
             return null;
         }
@@ -73,7 +76,7 @@ public class FileReader {
             releaseResource(file, br);
             return readLines;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
             releaseResource(file, br);
             return null;
         }
@@ -121,7 +124,7 @@ public class FileReader {
             releaseResource(file, br);
             return new ArrayList<>();
         } catch (IOException e) {
-            e.printStackTrace();
+        	log.error(e);
             releaseResource(file, br);
             return new ArrayList<>();
         }
@@ -169,7 +172,7 @@ public class FileReader {
             releaseResource(file, br);
             return readLines;
         } catch (IOException e) {
-            e.printStackTrace();
+        	log.error(e);
             releaseResource(file, br);
             return null;
         }

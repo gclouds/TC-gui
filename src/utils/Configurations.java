@@ -6,19 +6,10 @@
 package utils;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.prefs.Preferences;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import constants.ToValue;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import logger.Logger;
-import models.ConfigWrapper;
 
 /**
  *

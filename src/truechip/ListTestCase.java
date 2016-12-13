@@ -53,6 +53,7 @@ import models.ProjectData;
 import models.TestDataModel;
 import utils.Configurations;
 import utils.FileReader;
+import utils.RunCommand;
 import utils.RunThread;
 
 /**
@@ -60,6 +61,7 @@ import utils.RunThread;
  * @author gauravsi
  */
 public class ListTestCase {
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ListTestCase.class);
 
     private AnchorPane mainContainer;
     BorderPane listView = null;
@@ -272,7 +274,7 @@ public class ListTestCase {
                         command = command + " " + lookup.getId() + "=" + lookup.getText();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                	log.error(e);
                     ConsoleController.appendToConsole("error: " + e.getLocalizedMessage());
                     //consoleLog.setText("Something went worng!!!\n");
                     runButton.setText("Run");
@@ -296,7 +298,7 @@ public class ListTestCase {
                     thread = new Thread(mainThread);
                     thread.start();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e);
                     ConsoleController.appendToConsole("error: " + e.getLocalizedMessage());
                     runButton.setText("Run");
                 }
@@ -310,7 +312,7 @@ public class ListTestCase {
             FileReader.deleteProject(projectPath);
             refreshMainContainer();
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
             refreshMainContainer();
         }
     }
@@ -386,12 +388,12 @@ public class ListTestCase {
                         textField.setId(line[0].trim());
                         rightGrid.addRow(rowCount++, label1, textField);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                    	log.error(e);
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
     }
 

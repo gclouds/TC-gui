@@ -16,10 +16,7 @@
             <menus>
                 <Menu fx:id="file_menu" mnemonicParsing="false" onAction="#fileMenuSelected" text="File">
                     <items>
-                        <MenuItem fx:id="file_testcaseList" mnemonicParsing="false" text="Test Case List" />
-                        <MenuItem fx:id="file_runTestCase" mnemonicParsing="false" text="Run a Test Case" />
-                        <MenuItem fx:id="file_runRegression" mnemonicParsing="false" text="Run A Regression" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="file_testcaseList" mnemonicParsing="false" text="Test Case Executor" />
                         <MenuItem fx:id="file_transactionLogger" mnemonicParsing="false" text="Transaction Logger" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="file_importProject" mnemonicParsing="false" text="Import Project" />
@@ -36,14 +33,6 @@
                 </Menu>
                 <Menu fx:id="file_units" mnemonicParsing="false" text="Units">
                     <items>
-                        <Menu mnemonicParsing="false" text="Time Scale">
-                            <items> 
-                                <MenuItem mnemonicParsing="false" text="Undo" />
-                                <MenuItem mnemonicParsing="false" text="Undo" />
-                                <MenuItem mnemonicParsing="false" text="Undo" />
-                                <MenuItem mnemonicParsing="false" text="Undo" />
-                            </items>
-                        </Menu>
                         <Menu mnemonicParsing="false" text="Values" onAction="#unitsMenuSelected">
                             <items> 
                                 <MenuItem fx:id="file_units_hex" mnemonicParsing="false" text="Hexadecimal" />

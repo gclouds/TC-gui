@@ -18,31 +18,28 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
-//import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import library.LogTreeItem;
 import logger.DataList;
 import logger.Logger;
 import models.DetailedLogs;
-import models.ProjectData;
-import utils.Configurations;
 import utils.GenericLogModel;
 import utils.ReadLogger;
 
@@ -53,7 +50,7 @@ import utils.ReadLogger;
 public class TransactionLogger {
 	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TransactionLogger.class);
 	List<String> listOfKeysDetailed;
-	File logFile;
+	String logFilePath;
 	private TableView secondTable;
 	Map<String, List> loggerMap;
 	private AnchorPane mainContainer;
@@ -63,16 +60,26 @@ public class TransactionLogger {
 	VBox rightVBox = null;
 	TreeTableView centerListView;
 	public TextArea consoleLog = new TextArea();
-	public Button runButton = new Button("Run");
 	FlowPane rightSideContent = new FlowPane();
 	ComboBox targetComboBox = new ComboBox();
 	Thread thread;
 	MainPageController mainController;
+	Button refreshButton;
+	TextField searchTxt;
+	
 	public TransactionLogger(MainPageController mainController) {
 		this.mainController = mainController;
 		this.mainContainer = mainController.mainContainer;
 		listView = new BorderPane();
-		
+		refreshButton= new Button();
+		refreshButton.setTooltip(new Tooltip("Reload"));
+		Image image = new Image("resources/refresh2.gif",15,15,true,true);
+		refreshButton.setGraphic(new ImageView(image));
+		refreshButton.setOnMouseClicked(this::setLoggerView);
+		searchTxt= new TextField();
+		searchTxt.setOnKeyReleased(this::search);
+		ToolBar tool= new ToolBar(refreshButton,new Label("Search:"),searchTxt);
+		listView.setTop(tool);
 	}
 
 	public BorderPane getNode() {
@@ -137,6 +144,7 @@ public class TransactionLogger {
 
 	public void refreshLogViewer(File logFile) {
 		try {
+			logFilePath=logFile.getAbsolutePath();
 			ReadLogger logger = new ReadLogger(logFile);
 			log.info("truechip.TransactionLogger.selectFile() map:");
 
@@ -194,12 +202,28 @@ public class TransactionLogger {
 				sp.setDividerPositions(1f);
 
 			}
-			
 			listView.setCenter(sp);
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
+	
+	public void setLoggerView(MouseEvent event) {
+		refreshLoggerView();
+	}
+	public void refreshLoggerView() {
+		log.info("refreshing log view, file name:: "+logFilePath);
+		File fileLogFile = new File(logFilePath);
+		TransactionLogger newLoggerView= new TransactionLogger(mainController);
+		newLoggerView.refreshLogViewer(fileLogFile);
+	}
+	public void search(KeyEvent event) {
+		String text=((TextField)event.getSource()).getText();
+		log.info("searching for text:: "+text);
+		//centerListView
+		
+		log.info("searching for event:: "+event.getText());
 
+	}
 }

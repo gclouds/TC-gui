@@ -1,6 +1,7 @@
 package truechip;
 
 import java.io.File;
+import java.util.Iterator;
 
 import controller.MainPageController;
 import de.jensd.shichimifx.utils.TabPaneDetacher;
@@ -24,6 +25,7 @@ import javafx.stage.Stage;
 import utils.Configurations;
 
 public class TabViewTransactionLogger {
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TabViewTransactionLogger.class);
 
 	MainPageController mainController;
 	private File logFile;
@@ -36,11 +38,7 @@ public class TabViewTransactionLogger {
 		rootTab = new TabPane();
 		TabPaneDetacher.create().makeTabsDetachable(rootTab);
 		refreshButton = new Button();
-		refreshButton.setTooltip(new Tooltip("Refresh"));
-		Image image = new Image("resources/refresh2.gif",15,15,true,true);
-		BackgroundImage bgI= new BackgroundImage(image,BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-		Background background = new Background(bgI);
-		refreshButton.setGraphic(new ImageView(image));
+		
 		//refreshButton.setBackground(background);
 	}
 	
@@ -55,7 +53,7 @@ public class TabViewTransactionLogger {
 			createNewTab(logFile);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 
 	}
@@ -82,14 +80,24 @@ public class TabViewTransactionLogger {
 		selectedItem.setContent(newLoggerView.getNode());
 		newLoggerView.refreshLogViewer(fileLogFile);
 	}
-
+	public void refreshLoggerViewAll() {
+		Iterator<Tab> iterator = rootTab.getTabs().iterator();
+		while(iterator.hasNext()){
+			Tab selectedItem = iterator.next();
+			String currentfilePath = selectedItem.getTooltip().getText();
+			File fileLogFile = new File(currentfilePath);
+			TransactionLogger newLoggerView= new TransactionLogger(mainController);
+			selectedItem.setContent(newLoggerView.getNode());
+			newLoggerView.refreshLogViewer(fileLogFile);
+		}
+		
+	}
 
 	public TabPane getRootTab() {
 		mainController.getToolbarMain().getItems().clear();
-		Button browseButton = new Button("browse log file");
+		Button browseButton = new Button("Browse");
 		browseButton.setOnMouseClicked(this::selectFile);
-		refreshButton.setOnMouseClicked(this::setLoggerView);
-		mainController.getToolbarMain().getItems().addAll(new Label("Logger Viewer"), browseButton,refreshButton);
+		mainController.getToolbarMain().getItems().addAll(new Label("Logger Viewer"), browseButton);
 		return rootTab;
 	}
 	public void setLoggerView(MouseEvent event) {

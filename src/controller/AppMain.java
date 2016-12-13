@@ -6,9 +6,7 @@
 package controller;
 
 import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.logging.Level;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -24,6 +22,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import logger.Logger;
 import utils.Configurations;
+import utils.LoadLicenceC;
 import utils.RootLogger;
 
 /**
@@ -31,6 +30,11 @@ import utils.RootLogger;
  * @author gauravsi
  */
 public class AppMain extends Application {
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Application.class);
+
+	static{
+		RootLogger rootLogger = new RootLogger(true, true);
+	}
     static AppMain appmain=null;
     @Override
     public void start(Stage stage) throws Exception {
@@ -99,15 +103,23 @@ public class AppMain extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    	boolean isConsoleAppender=false;
+    	boolean isConsoleAppender=true;
     	if(args.length==1 && args[0].equalsIgnoreCase("show")){
     		isConsoleAppender=true;
     	}
         try {
-        	RootLogger rootLogger = new RootLogger(isConsoleAppender, true);
-            launch(args);
+        	//RootLogger rootLogger = new RootLogger(isConsoleAppender, true);
+        	if(LoadLicenceC.checkLic()){
+        		System.gc();
+        		launch(args);
+        	}else{
+        		log.error("No valid license found on this machine!!!");
+//        		System.exit(1);
+        		launch(args);
+        	}
+            
         } catch (Throwable t) {
-            t.printStackTrace();
+        	log.error(t);
         }
     }
 

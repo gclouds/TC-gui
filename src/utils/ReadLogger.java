@@ -108,7 +108,7 @@ public class ReadLogger {
 			}
 			return outputTableview;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			throw new Exception("not a valid type of log file" + logFile.getAbsolutePath());
 		}
 
@@ -219,7 +219,7 @@ public class ReadLogger {
 			}
 			releaseResource(logFile, br);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 			releaseResource(logFile, br);
 		}
 

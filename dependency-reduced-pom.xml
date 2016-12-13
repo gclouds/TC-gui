@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>TrueChipGUI</groupId>
   <artifactId>TrueChipGUI</artifactId>
-  <version>1</version>
+  <version>1.2</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
@@ -35,6 +35,7 @@
           </execution>
         </executions>
         <configuration>
+          <minimizeJar>true</minimizeJar>
           <filters>
             <filter>
               <artifact>*:*</artifact>
@@ -68,11 +69,18 @@
               <goal>build-jar</goal>
             </goals>
           </execution>
+          <execution>
+            <id>create-native</id>
+            <phase>package</phase>
+            <goals>
+              <goal>build-native</goal>
+            </goals>
+          </execution>
         </executions>
         <configuration>
           <mainClass>${application-mainClass}</mainClass>
           <vendor>TrueChip</vendor>
-          <appName>TrueChipGUI</appName>
+          <appName>GUI</appName>
         </configuration>
       </plugin>
     </plugins>

@@ -35,6 +35,7 @@ import net.lingala.zip4j.exception.ZipException;
  *
  */
 public class UnzipUtility {
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UnzipUtility.class);
 
     /**
      * Size of the buffer to read/write data
@@ -151,7 +152,7 @@ public class UnzipUtility {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
 
     }

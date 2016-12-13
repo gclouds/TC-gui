@@ -17,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import logger.Logger;
 import utils.Configurations;
+import utils.LoadLicenceC;
 import utils.UnzipUtility;
 
 /**
@@ -24,6 +25,7 @@ import utils.UnzipUtility;
  * @author gauravsi
  */
 public class ImportProject {
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ImportProject.class);
 
     static String outputfolder = Configurations.getWorkSpaceFilePath().getParent();
     static BorderPane projectList = null;
@@ -59,8 +61,7 @@ public class ImportProject {
                 unzipper.unzip(inputFilePath, outputfolder, "pwd");
 
             } catch (Exception ex) {
-                // some errors occurred
-                ex.printStackTrace();
+                log.error(ex);
             }
 
         } catch (Exception e) {
@@ -82,8 +83,7 @@ public class ImportProject {
                 unzipper.unzip(inputFilePath, outputfolder, "pwd");
 
             } catch (Exception ex) {
-                // some errors occurred
-                ex.printStackTrace();
+                log.error(ex);
             }
 
         } catch (Exception e) {
@@ -137,7 +137,7 @@ public class ImportProject {
             Logger.info("Done");
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.error(ex);
         }
     }
 }

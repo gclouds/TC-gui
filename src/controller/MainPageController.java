@@ -174,7 +174,7 @@ public class MainPageController implements Initializable {
 			SystemConstants.toValue = ToValue.TO_BIN;
 			break;
 		}
-		logViewer.refreshLoggerView();
+		logViewer.refreshLoggerViewAll();
 	}
 
 	@FXML

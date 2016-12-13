@@ -19,7 +19,7 @@ import logger.Logger;
  * @author gauravsi
  */
 public class RunCommand {
-
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(RunCommand.class);
     public static Thread asyncExecute(String command, File file, ListTestCase listTestCase) {
 
             RunThread mainThread = new RunThread(command, command, listTestCase);
@@ -45,7 +45,7 @@ public class RunCommand {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
 
         return output.toString();
@@ -72,10 +72,10 @@ public class RunCommand {
 
             Logger.info("Output: " + output.message + "\nError: " + error.message);
         } catch (IOException e) {
-            e.printStackTrace();
+        	log.error(e);
             consoleLog.appendText("\n" + e.getMessage());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+        	log.error(e);
         }
     }
 
@@ -105,7 +105,7 @@ public class RunCommand {
                 }
                 message = buffer.toString();
             } catch (IOException ioe) {
-                ioe.printStackTrace();
+            	log.error(ioe);
             }
         }
     }

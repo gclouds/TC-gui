@@ -3,21 +3,25 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>TrueChipGUI</groupId>
 	<artifactId>TrueChipGUI</artifactId>
-	<version>1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<version.java.source>1.8</version.java.source>
 		<version.java.target>1.8</version.java.target>
-
 		<version.org.eclipse.fx>2.2.0</version.org.eclipse.fx>
-
 		<application-mainClass>controller.AppMain</application-mainClass>
 	</properties>
-
 	<dependencies>
+		<!-- <dependency> <groupId>cz.adamh.utils</groupId> <artifactId>native-utils</artifactId> 
+			<version>1.0-SNAPSHOT</version> <scope>system</scope> <systemPath>D:/personal/git_projects/truechip-gui/lib/native-utils-1.0-SNAPSHOT.jar</systemPath> 
+			</dependency> -->
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>4.2.2</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -98,6 +102,7 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.4.3</version>
 				<configuration>
+					<minimizeJar>true</minimizeJar>
 					<filters>
 						<filter>
 							<artifact>*:*</artifact>
@@ -135,7 +140,7 @@
 				<configuration>
 					<mainClass>${application-mainClass}</mainClass>
 					<vendor>TrueChip</vendor>
-					<appName>TrueChipGUI</appName>
+					<appName>GUI</appName>
 				</configuration>
 				<executions>
 					<execution>
@@ -146,7 +151,13 @@
 							<goal>build-jar</goal>
 						</goals>
 					</execution>
-
+					<execution>
+						<id>create-native</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build-native</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
