@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class DataList {
 
-	public DataList(HashMap<String, String> data) {
+	public DataList(Map<String, Object> data) {
 		this.data = data;
 	}
 
-	private HashMap<String, String> data;
+	private Map<String, Object> data;
 	private String currentString;
 	private List<DataList> child = new ArrayList<>();
 	private DataList parent = null;
@@ -27,11 +27,11 @@ public class DataList {
 		return !(child.isEmpty());
 	}
 
-	public HashMap<String, String> getData() {
+	public Map<String, Object> getData() {
 		return data;
 	}
 
-	public void setData(HashMap<String, String> data) {
+	public void setData(Map<String, Object> data) {
 		this.data = data;
 	}
 
@@ -56,7 +56,7 @@ public class DataList {
 	}
 
 	public String getCurrentString() {
-		return data.get("Row");
+		return (String) data.get("Row");
 	}
 
 	public void setCurrentString(String currentString) {

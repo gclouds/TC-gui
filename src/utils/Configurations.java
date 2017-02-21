@@ -8,14 +8,16 @@ package utils;
 import java.io.File;
 import java.util.prefs.Preferences;
 
+import org.apache.log4j.Logger;
+
 import constants.ToValue;
-import logger.Logger;
 
 /**
  *
  * @author gauravsi
  */
 public class Configurations {
+	public final static Logger log = Logger.getLogger(Configurations.class);
 
 	private static ToValue globalValueType=ToValue.TO_DEC; 
     /**
@@ -35,7 +37,7 @@ public class Configurations {
         Preferences prefs = Preferences.userNodeForPackage(Configurations.class);
         String filePath = prefs.get("filePath", null);
         if (filePath != null) {
-            Logger.info("found workspace path: " + filePath);
+            log.info("found workspace path: " + filePath);
             //return filePath;
             File file = new File(filePath);
             if(file.exists()){

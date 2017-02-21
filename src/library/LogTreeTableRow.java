@@ -1,12 +1,13 @@
 package library;
 
-import javafx.scene.control.TreeTableRow;
-import utils.GenericLogModel;
+import java.util.Map;
 
-public class LogTreeTableRow extends TreeTableRow<GenericLogModel> {
+import javafx.scene.control.TreeTableRow;
+
+public class LogTreeTableRow extends TreeTableRow<Map<String, Object>> {
 
 	@Override
-	protected void updateItem(GenericLogModel item, boolean empty) {
+	protected void updateItem(Map<String, Object> item, boolean empty) {
 		
 		if (empty) {
         } else {

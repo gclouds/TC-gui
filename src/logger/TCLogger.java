@@ -12,18 +12,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import utils.FileReader;
 
 /**
  *
  * @author gauravsi
  */
-public class Logger extends SuperLoggger {
-	
+public class TCLogger extends SuperLoggger {
+	public final static Logger logger = Logger.getLogger(TCLogger.class);
+
 	private HashMap<String, String> headerMap;
 	private List<DataList> leftSideTable;
 	
-    public Logger(List<String[]> list) throws Exception {
+    public TCLogger(List<String[]> list) throws Exception {
 		super(list);
 		
 		Map<String, Object> generateTableData = super.generateTableData();
@@ -78,7 +81,7 @@ public class Logger extends SuperLoggger {
 	private static void print(String[] toPrint){
 		
 		for(String str:toPrint){
-			Logger.info(str);
+			logger.info(str);
 		}
 		
 	}

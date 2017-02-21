@@ -10,6 +10,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.apache.log4j.Logger;
+
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -18,13 +21,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import truechip.ListTestCase;
-import logger.Logger;
+import logger.TCLogger;
 
 /**
  *
  * @author gaurav
  */
 public class RunThread extends Thread {
+	public final static Logger log = Logger.getLogger(RunThread.class);
 
     String command;
     File file;
@@ -47,7 +51,7 @@ public class RunThread extends Thread {
                     new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                Logger.info(line);
+                log.info(line);
                 final String output=line;
                 Platform.runLater(new Runnable() {
                     @Override

@@ -7,6 +7,8 @@ package controller;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,7 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import logger.Logger;
+import library.LicenseUtill;
 import utils.Configurations;
 import utils.LoadLicenceC;
 import utils.RootLogger;
@@ -30,10 +32,10 @@ import utils.RootLogger;
  * @author gauravsi
  */
 public class AppMain extends Application {
-	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Application.class);
-
+	public final static Logger log = Logger.getLogger(Application.class);
+	public static LicenseUtill licenseObejct;
 	static{
-		RootLogger rootLogger = new RootLogger(true, true);
+		//RootLogger rootLogger = new RootLogger(true, true);
 	}
     static AppMain appmain=null;
     @Override
@@ -49,22 +51,22 @@ public class AppMain extends Application {
             btnOpenDirectoryChooser.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    Logger.info("opening workspace dialog....");
+                    log.info("opening workspace dialog....");
                     DirectoryChooser directoryChooser = new DirectoryChooser();
                     File selectedDirectory
                             = directoryChooser.showDialog(stage);
 
                     if (!selectedDirectory.isDirectory()) {
-                        Logger.info("false: " + selectedDirectory.getAbsolutePath());
+                        log.info("false: " + selectedDirectory.getAbsolutePath());
                         labelSelectedDirectory.setText("No Directory selected");
                     } else {
                         Configurations.setFilePath(selectedDirectory);
-                        Logger.info("true: " + selectedDirectory.getAbsolutePath());
+                        log.info("true: " + selectedDirectory.getAbsolutePath());
 
                         try {
                             start(stage);
                         } catch (Exception ex) {
-                            Logger.info(ex);
+                            log.info(ex);
                         }
                     }
                 }
@@ -103,22 +105,25 @@ public class AppMain extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    	boolean isConsoleAppender=true;
+    	boolean isConsoleAppender=false;
+    	boolean isLicensed=true;
     	if(args.length==1 && args[0].equalsIgnoreCase("show")){
     		isConsoleAppender=true;
     	}
         try {
-        	//RootLogger rootLogger = new RootLogger(isConsoleAppender, true);
-        	if(LoadLicenceC.checkLic()){
-        		System.gc();
+        	RootLogger rootLogger = new RootLogger(isConsoleAppender, true);
+        	licenseObejct=LoadLicenceC.getLicenseUtill();
+        	if(LoadLicenceC.checkLic(licenseObejct)){
         		launch(args);
         	}else{
-        		log.error("No valid license found on this machine!!!");
-//        		System.exit(1);
-        		launch(args);
+        		System.out.println("No valid license found on this machine!!!");
+        		System.exit(1);
+      		launch(args);
         	}
+        	//launch(args);
             
         } catch (Throwable t) {
+        	System.out.println("No valid license found on this machine or something went wrong!!!");
         	log.error(t);
         }
     }

@@ -5,19 +5,20 @@
  */
 package utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import logger.Logger;
 
 /**
  *
  * @author gauravsi
  */
 public class GenericLogModel {
+	public final static Logger log = Logger.getLogger(FileReader.class);
+
 	HashMap<String, String> logMap=new HashMap<>();
     
     public HashMap<String, String> getLogMap() {
@@ -29,7 +30,7 @@ public class GenericLogModel {
     }
     
     public StringProperty getValue(String key){
-        Logger.info("get map value: '"+key+"': '"+getLogMap().get(key)+"'");
+    	log.info("get map value: '"+key+"': '"+getLogMap().get(key)+"'");
         return new SimpleStringProperty(getLogMap().get(key));
     }
 

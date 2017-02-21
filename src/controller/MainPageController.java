@@ -8,12 +8,13 @@ package controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.Logger;
+
 import constants.SystemConstants;
 import constants.ToValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,14 +33,13 @@ import truechip.ListTestCase;
 import truechip.TabViewTransactionLogger;
 import utils.Configurations;
 import utils.MainWindowsUtils;
-import logger.Logger;
-import truechip.TransactionLogger;
 
 /**
  *
  * @author gauravsi
  */
 public class MainPageController implements Initializable {
+	public final static Logger log = Logger.getLogger(MainPageController.class);
 
 	@FXML
 	public Menu file_menu;
@@ -93,7 +93,7 @@ public class MainPageController implements Initializable {
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		Logger.info("initialize Main Page...");
+		log.info("initialize Main Page...");
 		workspacename.setText(Configurations.getWorkSpaceFilePath().getAbsolutePath());
 		
 		mainView = new BorderPane();
@@ -113,11 +113,11 @@ public class MainPageController implements Initializable {
 
 	@FXML
 	private void fileMenuSelected(ActionEvent event) {
-		Logger.info(event);
+		log.info(event);
 		Object source = event.getTarget();
 		MenuItem menuItem = (MenuItem) source;
 		String id = menuItem.getId();
-		Logger.info("controller.MainPageController.fileMenuSelected():" + id);
+		log.info("controller.MainPageController.fileMenuSelected():" + id);
 
 		switch (id) {
 		case "file_testcaseList":
@@ -143,7 +143,7 @@ public class MainPageController implements Initializable {
 			System.exit(0);
 			break;
 		case "file_changeWorkSpace":
-			Logger.info("controller.MainPageController.fileMenuSelected()workspacename");
+			log.info("controller.MainPageController.fileMenuSelected()workspacename");
 			break;
 
 		}
@@ -151,26 +151,26 @@ public class MainPageController implements Initializable {
 
 	@FXML
 	private void unitsMenuSelected(ActionEvent event) {
-		Logger.info(event);
+		log.info(event);
 		Object source = event.getTarget();
 		MenuItem menuItem = (MenuItem) source;
 		String id = menuItem.getId();
-		Logger.info("controller.MainPageController.fileMenuSelected():" + id);
+		log.info("controller.MainPageController.fileMenuSelected():" + id);
 		switch (id) {//
 		case "file_units_hex":
-			Logger.info("file_units_hex");
+			log.info("file_units_hex");
 			SystemConstants.toValue = ToValue.TO_HEX;
 			break;
 		case "file_units_dec":
-			Logger.info("file_units_dec");
+			log.info("file_units_dec");
 			SystemConstants.toValue = ToValue.TO_DEC;
 			break;
 		case "file_units_oct":
-			Logger.info("file_units_oct");
+			log.info("file_units_oct");
 			SystemConstants.toValue = ToValue.TO_OCT;
 			break;
 		case "file_units_bin":
-			Logger.info("file_units_bin");
+			log.info("file_units_bin");
 			SystemConstants.toValue = ToValue.TO_BIN;
 			break;
 		}

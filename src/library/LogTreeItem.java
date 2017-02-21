@@ -18,14 +18,14 @@ import javafx.scene.control.MenuItemBuilder;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import logger.Logger;
+import logger.TCLogger;
 import logger.SuperLoggger;
 import numbersystem.Convertor;
 import truechip.TransactionLogger;
 import utils.GenericLogModel;
 import utils.NumberSystemUtils;
 
-public class LogTreeItem extends TreeItem<GenericLogModel>{
+public class LogTreeItem extends TreeItem<Map<String, Object>>{
 	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LogTreeItem.class);
 
 	ContextMenu contextMenu=new ContextMenu();
@@ -37,11 +37,15 @@ public class LogTreeItem extends TreeItem<GenericLogModel>{
 	MenuItem toBinMenu = new MenuItem("to BIN");
 
 
-	public LogTreeItem(GenericLogModel value,TransactionLogger transactionLogger) {
+	public LogTreeItem(Map<String, Object> value,TransactionLogger transactionLogger) {
 		super(value);
 		contextMenu.getItems().addAll(toBinMenu,toDecMenu,toHexMenu,toOctMenu);
 		this.root=transactionLogger;
 		
+	}
+	
+	public LogTreeItem(){
+		super(null);
 	}
 
 
@@ -78,16 +82,16 @@ public class LogTreeItem extends TreeItem<GenericLogModel>{
 		this.contextMenu = contextMenu;
 	}
 
-	public void getConvertedLogModel(GenericLogModel logModel,ToValue toValue){
-		for(Entry<String, String> keyset:logModel.getLogMap().entrySet()){
+	public void getConvertedLogModel(Map<String, Object> logModel,ToValue toValue){
+		for(Entry<String, Object> keyset:logModel.entrySet()){
 			String columnHeader = keyset.getKey();
-			String cellvalue = keyset.getValue();
+			String cellvalue = (String) keyset.getValue();
 			log.info("converting value for:: "+keyset.getKey()+":"+cellvalue);
 			String[] splitedCellValue = cellvalue.split("'");
 			if(splitedCellValue.length==2){
 				try {
 					cellvalue=getConvertedValue(splitedCellValue[1].charAt(0)+"",splitedCellValue[0], splitedCellValue[1].substring(1),toValue);
-					logModel.getLogMap().put(columnHeader, cellvalue);
+					logModel.put(columnHeader, cellvalue);
 					log.info("converted value for:: "+keyset.getKey()+":"+cellvalue);
 				} catch (Exception e) {
 					log.error(e);
@@ -95,10 +99,9 @@ public class LogTreeItem extends TreeItem<GenericLogModel>{
 				
 			}
 		}
-		HashMap<String, String> logMap = (HashMap<String, String>)logModel.getLogMap().clone();
-		logModel.setLogMap(logMap);
+		Map<String, Object> clonedMap = (Map<String, Object>) ((HashMap<String, Object>) logModel).clone();
 		setValue(null);
-		setValue(logModel);
+		setValue(clonedMap);
 		root.showSecondaryTable(logModel);
 	}
 	

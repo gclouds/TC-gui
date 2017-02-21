@@ -10,16 +10,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import org.apache.log4j.Logger;
+
 import javafx.scene.control.TextArea;
 import truechip.ListTestCase;
-import logger.Logger;
+import logger.TCLogger;
 
 /**
  *
  * @author gauravsi
  */
 public class RunCommand {
-	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(RunCommand.class);
+	public final static Logger log = Logger.getLogger(RunCommand.class);
     public static Thread asyncExecute(String command, File file, ListTestCase listTestCase) {
 
             RunThread mainThread = new RunThread(command, command, listTestCase);
@@ -70,7 +73,7 @@ public class RunCommand {
             exitVal = proc.waitFor();
             consoleLog.appendText("\n Output: " + output.message + "\nError: " + error.message);
 
-            Logger.info("Output: " + output.message + "\nError: " + error.message);
+            log.info("Output: " + output.message + "\nError: " + error.message);
         } catch (IOException e) {
         	log.error(e);
             consoleLog.appendText("\n" + e.getMessage());

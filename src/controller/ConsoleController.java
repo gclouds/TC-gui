@@ -7,24 +7,20 @@ package controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+
+import org.apache.log4j.Logger;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import logger.Logger;
 
 /**
  *
  * @author gauravsi
  */
 public class ConsoleController implements Initializable {
+	public final static Logger log = Logger.getLogger(ConsoleController.class);
 
     @FXML
     BorderPane mainPane;
@@ -42,7 +38,7 @@ public class ConsoleController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Logger.info("ConsoleController Main Page...");
+        log.info("ConsoleController Main Page...");
         consoleLog.setEditable(false);
         mainPane.setCenter(consoleLog);
     }

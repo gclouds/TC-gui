@@ -133,7 +133,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>com.zenjava</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>8.5.0</version>
@@ -144,7 +144,7 @@
 				</configuration>
 				<executions>
 					<execution>
-						<!-- required before build-native -->
+						required before build-native
 						<id>create-jfxjar</id>
 						<phase>package</phase>
 						<goals>
@@ -159,7 +159,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 </project>

@@ -5,6 +5,7 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.Priority;
 
 public class RootLogger {
 	PatternLayout layout = new PatternLayout();
@@ -33,7 +34,7 @@ public class RootLogger {
         fileAppender.activateOptions();
  
         // configures the root logger
-        rootLogger.setLevel(Level.DEBUG);
+        rootLogger.setLevel(Level.INFO);
         if(isConsoleAppender) rootLogger.addAppender(consoleAppender);
         if(isFileAppender)rootLogger.addAppender(fileAppender);
 		

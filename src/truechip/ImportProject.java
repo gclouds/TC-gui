@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.log4j.Logger;
+
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import logger.Logger;
 import utils.Configurations;
-import utils.LoadLicenceC;
 import utils.UnzipUtility;
 
 /**
@@ -25,7 +25,7 @@ import utils.UnzipUtility;
  * @author gauravsi
  */
 public class ImportProject {
-	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ImportProject.class);
+	public final static Logger log = Logger.getLogger(ImportProject.class);
 
     static String outputfolder = Configurations.getWorkSpaceFilePath().getParent();
     static BorderPane projectList = null;
@@ -35,7 +35,7 @@ public class ImportProject {
     }
 
     public static BorderPane get() {
-        Logger.info("truechip.ListTestCase.get()");
+        log.info("truechip.ListTestCase.get()");
         if (projectList == null) {
             build();
             return projectList;
@@ -96,7 +96,7 @@ public class ImportProject {
         byte[] buffer = new byte[1024];
 
         try {
-            Logger.info("truechip.ImportProject.unZipIt()" + Configurations.getWorkSpaceFilePath().getParent());
+            log.info("truechip.ImportProject.unZipIt()" + Configurations.getWorkSpaceFilePath().getParent());
             //create output directory is not exists
             File folder = new File(Configurations.getWorkSpaceFilePath().getParent());
             if (!folder.exists()) {
@@ -114,7 +114,7 @@ public class ImportProject {
                 String fileName = ze.getName();
                 File newFile = new File(folder + File.separator + fileName);
 
-                Logger.info("file unzip : " + newFile.getAbsoluteFile());
+                log.info("file unzip : " + newFile.getAbsoluteFile());
 
                 //create all non exists folders
                 //else you will hit FileNotFoundException for compressed folder
@@ -134,7 +134,7 @@ public class ImportProject {
             zis.closeEntry();
             zis.close();
 
-            Logger.info("Done");
+            log.info("Done");
 
         } catch (IOException ex) {
             log.error(ex);

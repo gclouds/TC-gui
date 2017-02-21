@@ -7,19 +7,21 @@ package utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import javafx.scene.control.TreeItem;
-import logger.Logger;
 
 /**
  *
  * @author gauravsi
  */
 public class LogModel {
+	public final static Logger log = Logger.getLogger(LogModel.class);
 
 	List<String> lines;
 	Map<String, Object> logMap;
@@ -31,7 +33,7 @@ public class LogModel {
 
 	public LogModel(File file) {
 		this.lines = FileReader.readLinesForLogger(file);
-		Logger.info("utils.LogModel.<init>() size of lines: " + lines.size());
+		log.info("utils.LogModel.<init>() size of lines: " + lines.size());
 		root = new TreeItem<LogModel>();
 		setLogMap();
 	}
@@ -76,7 +78,7 @@ public class LogModel {
 				header = new HashMap<String, String>();
 				rootLogMap = new HashMap();
 				next = next.substring(next.indexOf("|") + 1);
-				Logger.info("lock hogaya: " + next);
+				log.info("lock hogaya: " + next);
 
 				List<String> list = new ArrayList<>();
 				String[] split = next.split("\\|");
@@ -88,8 +90,8 @@ public class LogModel {
 					header.put(i + "", list.get(i).trim());
 					rootLogMap.put(list.get(i).trim(), "-");
 				}
-				Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+header);
-				Logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+rootLogMap);
+				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+header);
+				log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+rootLogMap);
 			} else {
 				// Logger.info("next: " + next);
 				try {
@@ -109,13 +111,13 @@ public class LogModel {
 						listFirstNode.add(lineArray);
 					}
 				} catch (Exception e) {
-					Logger.info("next-error: " + next);
-					Logger.info("listout: " + listout.size());
+					log.info("next-error: " + next);
+					log.info("listout: " + listout.size());
 					// e.printStackTrace();
 				}
 			}
 		}
-		Logger.info("listout: " + listout.size());
+		log.info("listout: " + listout.size());
 		buildLogModel(listout);
 	}
 

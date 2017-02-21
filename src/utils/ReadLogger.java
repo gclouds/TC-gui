@@ -36,10 +36,10 @@ import javafx.scene.control.TreeTableView;
 import javafx.util.Callback;
 import library.CustomCallBack;
 import library.LogTreeItem;
-import logger.Logger;
+import logger.TCLogger;
 import models.DetailedLogs;
 import sun.net.www.protocol.mailto.MailToURLConnection;
-import logger.Logger;
+import logger.TCLogger;
 
 /**
  *
@@ -52,6 +52,9 @@ public class ReadLogger {
 
 	File logFile;
 	List<String> fileLine;
+	
+	TreeTableView<Map<String, Object>> centerListView;
+
 
 	public ReadLogger(File logFile) throws IOException {
 		this.logFile = logFile;
@@ -59,24 +62,30 @@ public class ReadLogger {
 		listOfKeysDetailed= new ArrayList<>();
 	}
 
-	public TreeTableView<GenericLogModel> getTLeftHandSideTable() throws Exception {
+	public TreeTableView<Map<String, Object>> getTLeftHandSideTable() throws Exception {
 
 		try {
-			TreeTableView<GenericLogModel> outputTableview = new TreeTableView();
+			centerListView = new TreeTableView();
 			String exceptionString = "";
 			boolean isException = false;
-			TreeTableColumn<GenericLogModel, String> firstCollumn = new TreeTableColumn<>("*");
+			TreeTableColumn<Map<String, Object>, String> firstCollumn = new TreeTableColumn<>("*");
 			firstCollumn.setPrefWidth(30);
 			firstCollumn.setResizable(false);
 			//firstCollumn.setCellFactory(param-> param.getValue().getValue().getValue("*"));
-			firstCollumn.setCellValueFactory(new Callback<CellDataFeatures<GenericLogModel, String>, ObservableValue<String>>() {
-				@Override 
-				public ObservableValue<String> call(CellDataFeatures<GenericLogModel, String> p) {
+			firstCollumn.setCellValueFactory(new Callback<CellDataFeatures<Map<String, Object>, String>, ObservableValue<String>>() {
+//				@Override 
+//				public ObservableValue<String> call(CellDataFeatures<GenericLogModel, String> p) {
+//					return new SimpleStringProperty("");
+//				}
+
+				@Override
+				public ObservableValue<String> call(CellDataFeatures<Map<String, Object>, String> param) {
+					// TODO Auto-generated method stub
 					return new SimpleStringProperty("");
 				}
 			  });
 			//outputTableview.getColumns().add(firstCollumn);
-			outputTableview.setRowFactory(new CustomCallBack()); 
+			centerListView.setRowFactory(new CustomCallBack()); 
 			
 			for (String next : fileLine) {
 				log.info("at line: " + next);
@@ -88,10 +97,10 @@ public class ReadLogger {
 
 					if (splitCols.length > 1) {
 						for (int i = 0; i < splitCols.length; i++) {
-							setCollumns(splitCols[i], outputTableview);
+							setCollumns(splitCols[i], centerListView);
 						}
 					} else {
-						setCollumns(result, outputTableview);
+						setCollumns(result, centerListView);
 					}
 					break;
 				} else {
@@ -106,7 +115,7 @@ public class ReadLogger {
 			if (isException) {
 				throw new Exception(exceptionString);
 			}
-			return outputTableview;
+			return centerListView;
 		} catch (Exception e) {
 			log.error(e);
 			throw new Exception("not a valid type of log file" + logFile.getAbsolutePath());
@@ -237,27 +246,26 @@ public class ReadLogger {
 		return 0;
 	}
 
-	private void setCollumns(String colString, TreeTableView table) {
-
-		TreeTableColumn<GenericLogModel, String> mainCol;
+	private void setCollumns(String colString, TreeTableView<Map<String, Object>> table) {
+		log.info("adding colloumn:: "+colString);
+		colString=colString.trim();
+		TreeTableColumn<Map<String, Object>, String> mainCol;
 
 		//TableColumn mainCol;
 		String[] split = colString.split(">");
 		if (split.length > 1) {
+			String label = split[0];
 			log.info("adding main collumn: " + split[0]);
-			mainCol = new TreeTableColumn(split[0]);
-			mainCol.setCellValueFactory(param -> param.getValue().getValue().getValue(split[0]));
+			mainCol = addColumn(label, label);
 			String[] subCols = split[1].replace("(", "").replace(")", "").split(",");
 			for (String subCol : subCols) {
 				log.info("Adding sub collumn: '" + subCol.trim() + "'");
-				TreeTableColumn<GenericLogModel, String> subtableCol = new TreeTableColumn<>(subCol);
-				subtableCol.setCellValueFactory(param -> param.getValue().getValue().getValue(subCol.trim()));
+				TreeTableColumn<Map<String, Object>, String> subtableCol =addColumn(subCol.trim(), subCol.trim());
 				mainCol.getColumns().add(subtableCol);
 			}
 			table.getColumns().add(mainCol);
 		} else {
-			mainCol = new TreeTableColumn(colString);
-			mainCol.setCellValueFactory(param -> param.getValue().getValue().getValue(colString.trim()));
+			mainCol = addColumn(colString,colString);
 			table.getColumns().add(mainCol);
 		}
 
@@ -270,6 +278,19 @@ public class ReadLogger {
 	public void setListOfKeysDetailed(List<String> listOfKeysDetailed) {
 		this.listOfKeysDetailed = listOfKeysDetailed;
 	}
-
+    protected TreeTableColumn<Map<String, Object>, String> addColumn(String label, String dataIndex) {
+        TreeTableColumn<Map<String, Object>, String> column = new TreeTableColumn<>(label);
+        column.setPrefWidth(150);
+        column.setCellValueFactory(
+            (TreeTableColumn.CellDataFeatures<Map<String, Object>, String> param) -> {
+                ObservableValue<String> result = new ReadOnlyStringWrapper("");
+                if (param.getValue().getValue() != null) {
+                    result = new ReadOnlyStringWrapper("" + param.getValue().getValue().get(dataIndex));
+                }
+                return result;
+            }
+        );      
+       	return column;
+    }
 
 }

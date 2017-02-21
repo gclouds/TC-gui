@@ -5,18 +5,19 @@
  */
 package truechip;
 
-import constants.SystemConstants;
-import controller.ConsoleController;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import constants.SystemConstants;
+import controller.ConsoleController;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -32,7 +33,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -48,12 +48,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import logger.Logger;
 import models.ProjectData;
-import models.TestDataModel;
 import utils.Configurations;
 import utils.FileReader;
-import utils.RunCommand;
 import utils.RunThread;
 
 /**
@@ -61,7 +58,7 @@ import utils.RunThread;
  * @author gauravsi
  */
 public class ListTestCase {
-	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ListTestCase.class);
+	public final static Logger log = Logger.getLogger(ListTestCase.class);
 
     private AnchorPane mainContainer;
     BorderPane listView = null;
@@ -155,7 +152,7 @@ public class ListTestCase {
     }
 
     public BorderPane get() {
-        Logger.info("truechip.ListTestCase.get()");
+        log.info("truechip.ListTestCase.get()");
         if (listView == null) {
             build();
             return listView;
@@ -205,7 +202,7 @@ public class ListTestCase {
         ListView testCaseSelected = (ListView) event.getSource();
         if (testCaseSelected != null) {
             tcName = testCaseSelected.getSelectionModel().getSelectedItem().toString();
-            Logger.info("truechip.ListTestCase.tcListClick():" + tcName);
+            log.info("truechip.ListTestCase.tcListClick():" + tcName);
         }
     }
 
@@ -216,8 +213,8 @@ public class ListTestCase {
         boolean isRgress = (targetComboBox.getSelectionModel().getSelectedItem().toString().equalsIgnoreCase("regress"));
 
         ProjectData project = projects.get(item.getParent().getValue());
-        Logger.info("truechip.ListTestCase.runATestDetailed(): " + tcName);
-        Logger.info("truechip.ListTestCase.runATestDetailed()" + event);
+        log.info("truechip.ListTestCase.runATestDetailed(): " + tcName);
+        log.info("truechip.ListTestCase.runATestDetailed()" + event);
         if (runButton.getText().equalsIgnoreCase("Run")) {
             runTest(project);
         } else {
@@ -231,7 +228,7 @@ public class ListTestCase {
     }
 
     private void runTest(ProjectData project) {
-        Logger.info("inside running test...");
+        log.info("inside running test...");
         String command = "make " + targetComboBox.getSelectionModel().getSelectedItem().toString();
         String selectedTarget = targetComboBox.getSelectionModel().getSelectedItem().toString();
         List<String> testcaseNames = new ArrayList<String>();
@@ -252,7 +249,7 @@ public class ListTestCase {
             alert.showAndWait();
         } else if (testcaseNames.size() > 0) {
             Iterator<String> iterator = project.getListSwitches().iterator();
-            Logger.info("Size of the iterator: " + project.getListSwitches().size());
+            log.info("Size of the iterator: " + project.getListSwitches().size());
 
             boolean isAllGood = true;
             if (testcaseNames.size() == 1) {
@@ -266,7 +263,7 @@ public class ListTestCase {
                 String[] split = line.split("\\?=");
                 try {
                     String id = split[0].trim();
-                    Logger.info("loking for : " + id);
+                    log.info("loking for : " + id);
                     TextField lookup = (TextField) rightGrid.lookup("#" + id);
                     // Logger.info(">>>>>>>>>>>>>>>>>>>>>>.." + lookup.getText());
                     if (!lookup.getText().isEmpty()) {
@@ -282,7 +279,7 @@ public class ListTestCase {
             }
             if (isAllGood) {
                 try {
-                    Logger.info("Runing for make file path: " + project.getMakeFilePath());
+                    log.info("Runing for make file path: " + project.getMakeFilePath());
                     //RunCommand.exeCommand(command, makeFileDir, consoleLog);
                     runButton.setText("Kill");
                     ConsoleController.appendToConsole("running command: " + command);
@@ -349,13 +346,13 @@ public class ListTestCase {
         try {
             ProjectData project = projects.get(projectname);
             List<String> makeFileTargets = project.getListTargets();
-            Logger.info("Size of targets: " + makeFileTargets.size());
+            log.info("Size of targets: " + makeFileTargets.size());
             if (makeFileTargets.size() > 0) {
                 runButton.setOnAction(this::runATestDetailed);
                 Label targetLabel = new Label("Targets: ");
                 targetComboBox.getItems().clear();
                 for (String line : makeFileTargets) {
-                    Logger.info("adding targets...");
+                    log.info("adding targets...");
                     targetComboBox.getItems().add(line);
                 }
                 targetComboBox.setValue(targetComboBox.getItems().get(0));
@@ -367,17 +364,17 @@ public class ListTestCase {
                 rightGrid.add(firsRow, 0, rowCount++, 2, 1);
 
                 List<String> readMakeFileArg = project.getListSwitches();
-                Logger.info("adding test data...." + readMakeFileArg.size());
+                log.info("adding test data...." + readMakeFileArg.size());
                 Iterator<String> iterator = readMakeFileArg.iterator();
                 while (iterator.hasNext()) {
                     String next = iterator.next();
                     String[] line = next.split("\\?=");
-                    Logger.info("adding at row: " + rowCount);
+                    log.info("adding at row: " + rowCount);
                     try {
                         Label label1 = new Label(line[0].trim());
                         label1.setAlignment(Pos.CENTER_RIGHT);
                         TextField textField = new TextField();
-                        Logger.info("Adding text field: " + next);
+                        log.info("Adding text field: " + next);
                         if (line[0].trim().equalsIgnoreCase(SystemConstants.defaultRegerssSwitchName)) {
                             textField.setText(SystemConstants.REGRESS_FILE_NAME);
                         } else if (line.length > 1) {

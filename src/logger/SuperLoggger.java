@@ -1,7 +1,6 @@
 package logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,7 @@ import utils.NumberSystemUtils;
 import utils.StringComparator;
 
 public class SuperLoggger {
-	public final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Logger.class);
+	public final static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(SuperLoggger.class);
 
 	List<String[]> list;
 
@@ -31,14 +30,14 @@ public class SuperLoggger {
 		boolean reset = false;
 		DataList dataList = null;
 		for (String[] lineArray : list) {
-			Logger.info("checking line: "+lineArray);
+			logger.info("checking line: "+lineArray);
 			String currentString = lineArray[0].trim();
 			if (StringUtils.containsIgnoreCase("row", currentString)) {
 				listDataList = new ArrayList<>();
 
 				Map<String, String> arrayList = toArrayList(lineArray);
 				fullData.put("header", arrayList);
-				Logger.info("end in row check");
+				logger.info("end in row check");
 				continue;
 			}
 			if (reset) {
@@ -46,17 +45,17 @@ public class SuperLoggger {
 				listDataList.add(dataList);
 				dataList.setCurrentString(currentString);
 				reset = false;
-				Logger.info("end in first reset");
+				logger.info("end in first reset");
 				continue;
 			}
 			if (lineArray.length == 1) {
 				reset = true;
-				Logger.info("end in Arrays.toString(lineArray).contains)" + lineArray.length);
+				logger.info("end in Arrays.toString(lineArray).contains)" + lineArray.length);
 				continue;
 			}
 			if (!reset) {
 				dataList = logic(dataList, lineArray, currentString);
-				Logger.info("end in !reset");
+				logger.info("end in !reset");
 
 			}
 
@@ -96,11 +95,11 @@ public class SuperLoggger {
 		return output;
 	}
 
-	HashMap<String, String> generateDataMap(String[] stringArray) throws Exception {
-		HashMap<String, String> output = new HashMap<>();
+	Map<String, Object> generateDataMap(String[] stringArray) throws Exception {
+		HashMap<String, Object> output = new HashMap<>();
 		Map<String, String> header = (HashMap<String, String>) fullData.get("header");
-		Logger.info("size of header: " + header.size());
-		Logger.info("size of data row: " + stringArray.length);
+		logger.info("size of header: " + header.size());
+		logger.info("size of data row: " + stringArray.length);
 		for (int i = 0; i < stringArray.length; i++) {
 			String key = header.get(Integer.toString(i));
 			Object keyUnit = getKeyUnit(key);
@@ -144,21 +143,6 @@ public class SuperLoggger {
 		return value;
 	}
 
-	public static void info(String msg) {
-		logger.info(msg);
-	}
-
-	public static void info(Object msg) {
-		logger.info(msg);
-	}
-
-	public static void error(String msg) {
-		logger.error(msg);
-	}
-
-	public static void error(Object msg) {
-		logger.error(msg);
-	}
 
 	private static Object getKeyUnit(String key) {
 		if (key.contains("{") && key.contains("}")) {
@@ -170,8 +154,8 @@ public class SuperLoggger {
 				map.put("name", key.substring(0, key.indexOf("{")));
 				return map;
 			}
-			Logger.info("condition: " + str.contains("'"));
-			Logger.info("unit: >> " + str);
+			logger.info("condition: " + str.contains("'"));
+			logger.info("unit: >> " + str);
 		}
 		return key.trim();
 	}

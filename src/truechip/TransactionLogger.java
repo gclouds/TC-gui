@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package truechip;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import controller.MainPageController;
 import javafx.collections.ObservableList;
@@ -18,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -38,14 +33,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import library.LogTreeItem;
 import logger.DataList;
-import logger.Logger;
+import logger.TCLogger;
 import models.DetailedLogs;
-import utils.GenericLogModel;
 import utils.ReadLogger;
 
+
 /**
- *
  * @author gauravsi
+ *
  */
 public class TransactionLogger {
 	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TransactionLogger.class);
@@ -58,7 +53,8 @@ public class TransactionLogger {
 	BorderPane listView = null;
 	TreeView treeView = null;
 	VBox rightVBox = null;
-	TreeTableView centerListView;
+	TreeTableView<Map<String, Object>> centerListView;
+	LogTreeItem rootItem;
 	public TextArea consoleLog = new TextArea();
 	FlowPane rightSideContent = new FlowPane();
 	ComboBox targetComboBox = new ComboBox();
@@ -92,15 +88,15 @@ public class TransactionLogger {
 		TreeItem selectedItem = (TreeItem) centerListView.getSelectionModel().getSelectedItem();
 		ObservableList selectedIndex = centerListView.getSelectionModel().getSelectedCells();
 		if (selectedIndex.size()>0) {
-			showSecondaryTable((GenericLogModel)selectedItem.getValue());
+			showSecondaryTable((Map<String, Object>) selectedItem.getValue());
 		}
 	}
-	public void showSecondaryTable(GenericLogModel value){
-		log.info("Adding Secondary Table data..." + value.getLogMap());
+	public void showSecondaryTable(Map<String, Object> value){
+		log.info("Adding Secondary Table data..." + value);
 		secondTable.getItems().clear();
-		for (Map.Entry<String, String> keySet : value.getLogMap().entrySet()) {
+		for (Entry<String, Object> keySet : value.entrySet()) {
 			if (listOfKeysDetailed.contains(keySet.getKey())) {
-				DetailedLogs detailedLogs = new DetailedLogs(keySet.getKey(), keySet.getValue());
+				DetailedLogs detailedLogs = new DetailedLogs(keySet.getKey(), (String) keySet.getValue());
 				secondTable.getItems().add(detailedLogs);
 			}
 		}
@@ -126,15 +122,13 @@ public class TransactionLogger {
 		AnchorPane.setRightAnchor(listView, 0.0);
 	}
 
-	public TreeItem<GenericLogModel> addChildren(GenericLogModel model, DataList dataList) {
+	public TreeItem<Map<String, Object>> addChildren(LogTreeItem parent, DataList dataList) {
 		// TreeItem<GenericLogModel> childTreeItem = new TreeItem<>(model);
-		TreeItem<GenericLogModel> childTreeItem = new LogTreeItem(model, this);
+		LogTreeItem childTreeItem = new LogTreeItem(dataList.getData(), this);
 		//
 		if (dataList.hasChild()) {
 			for (DataList childDataList : dataList.getChild()) {
-				GenericLogModel chilModel = new GenericLogModel();
-				chilModel.setLogMap(childDataList.getData());
-				childTreeItem.getChildren().add(addChildren(chilModel, childDataList));
+				childTreeItem.getChildren().add(addChildren(childTreeItem, childDataList));
 			}
 		}
 		return childTreeItem;
@@ -149,35 +143,31 @@ public class TransactionLogger {
 			log.info("truechip.TransactionLogger.selectFile() map:");
 
 
-			List<String[]> extractedData = Logger.extractData(logFile);
+			List<String[]> extractedData = TCLogger.extractData(logFile);
 
-			Logger logData = new Logger(extractedData);
+			TCLogger logData = new TCLogger(extractedData);
 
-			HashMap<String, String> headerMap = logData.getHeaderMap();
+			List<DataList> tableData = logData.getLeftSideTableData();
 
-			List<DataList> leftSideTableData = logData.getLeftSideTableData();
+//			GenericLogModel headerMapLeftSideTable = new GenericLogModel();
+//			headerMapLeftSideTable.setLogMap(headerMap);
+			
 
-			GenericLogModel headerMapLeftSideTable = new GenericLogModel();
-			headerMapLeftSideTable.setLogMap(headerMap);
+			rootItem = new LogTreeItem();
 
-			final TreeItem<GenericLogModel> treeItem = new TreeItem<>(headerMapLeftSideTable);
+			for (int i = 0; i < tableData.size(); i++) {
+				log.info("addding tableData: " + tableData.get(i).getData());
 
-			for (int i = 0; i < leftSideTableData.size(); i++) {
-				log.info("leftSideTableData: " + leftSideTableData.get(i).getData());
+				DataList dataList = tableData.get(i);
+				Map<String, Object> model = tableData.get(i).getData();
 
-				DataList dataList = leftSideTableData.get(i);
-				GenericLogModel model = new GenericLogModel();
-				model.setLogMap(leftSideTableData.get(i).getData());
+				TreeItem<Map<String, Object>> subItem = addChildren(rootItem,dataList);
 
-				TreeItem<GenericLogModel> childTreeItem = addChildren(model, dataList);
-
-				treeItem.getChildren().add(childTreeItem);
+				rootItem.getChildren().add(subItem);
 			}
 
-			TreeTableView<GenericLogModel> tLeftHandSideTable = logger.getTLeftHandSideTable();
-			tLeftHandSideTable.setRoot(treeItem);
-			centerListView = tLeftHandSideTable;
-			centerListView.setRoot(treeItem);
+			centerListView = logger.getTLeftHandSideTable();
+			centerListView.setRoot(rootItem);
 			centerListView.setShowRoot(false);
 			centerListView.setOnMouseClicked(this::mylistclicked);
 			centerListView.setColumnResizePolicy(TreeTableView.CONSTRAINED_RESIZE_POLICY);
@@ -219,11 +209,41 @@ public class TransactionLogger {
 		newLoggerView.refreshLogViewer(fileLogFile);
 	}
 	public void search(KeyEvent event) {
-		String text=((TextField)event.getSource()).getText();
-		log.info("searching for text:: "+text);
-		//centerListView
+		String filter=((TextField)event.getSource()).getText();
+        if (filter.isEmpty()) {
+        	centerListView.setRoot(rootItem);         
+        }
+        else {
+        	LogTreeItem filteredRoot = new LogTreeItem();
+            filter(rootItem, filter, filteredRoot);
+            centerListView.setRoot(filteredRoot);
+        }
 		
-		log.info("searching for event:: "+event.getText());
+		
+		/*String text=((TextField)event.getSource()).getText();
+		log.info("searching for text:: "+text);
+		centerListView.getmode		
+		log.info("searching for event:: "+event.getText());*/
 
 	}
+	
+    private void filter(LogTreeItem root, String filter, LogTreeItem filteredRoot) {
+        for (TreeItem<Map<String, Object>> child : root.getChildren()) {            
+        	LogTreeItem filteredChild = new LogTreeItem(child.getValue(),this);
+            filteredChild.setExpanded(true);
+            filter((LogTreeItem)child, filter, filteredChild );
+            if (!filteredChild.getChildren().isEmpty() || isMatch(filteredChild.getValue(), filter)) {
+                System.out.println(filteredChild.getValue() + " matches.");
+                filteredRoot.getChildren().add(filteredChild);
+            }
+        }
+    }
+    
+/*    private boolean isMatch(Map<String, Object> value, String filter) {
+        return value.values().stream().anyMatch((Object o) -> o.toString().contains(filter));
+    }*/
+    
+    private boolean isMatch(Map<String, Object> value, String filter) {
+        return value.values().stream().anyMatch((Object o) -> o.toString().contains(filter));
+    }
 }
