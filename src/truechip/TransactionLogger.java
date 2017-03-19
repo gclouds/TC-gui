@@ -233,7 +233,7 @@ public class TransactionLogger {
             filteredChild.setExpanded(true);
             filter((LogTreeItem)child, filter, filteredChild );
             if (!filteredChild.getChildren().isEmpty() || isMatch(filteredChild.getValue(), filter)) {
-                System.out.println(filteredChild.getValue() + " matches.");
+            	log.info(filteredChild.getValue() + " matches.");
                 filteredRoot.getChildren().add(filteredChild);
             }
         }

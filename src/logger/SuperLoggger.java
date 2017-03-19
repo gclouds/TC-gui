@@ -148,7 +148,7 @@ public class SuperLoggger {
 		if (key.contains("{") && key.contains("}")) {
 			String str = key.substring(key.indexOf("{") + 1, key.indexOf("}"));
 			if (str.contains("'")) {
-				Map<String, String> map = new HashMap();
+				Map<String, String> map = new HashMap<String, String>();
 				map.put("size", str.split("'")[0]);
 				map.put("unit", str.split("'")[1]);
 				map.put("name", key.substring(0, key.indexOf("{")));

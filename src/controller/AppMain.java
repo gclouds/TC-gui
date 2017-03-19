@@ -24,7 +24,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import library.LicenseUtill;
 import utils.Configurations;
-import utils.LoadLicenceC;
+import utils.CheckLicense;
 import utils.RootLogger;
 
 /**
@@ -112,11 +112,11 @@ public class AppMain extends Application {
     	}
         try {
         	RootLogger rootLogger = new RootLogger(isConsoleAppender, true);
-        	licenseObejct=LoadLicenceC.getLicenseUtill();
-        	if(LoadLicenceC.checkLic(licenseObejct)){
+        	licenseObejct=CheckLicense.getLicenseUtill();
+        	if(CheckLicense.checkLic(licenseObejct)){
         		launch(args);
         	}else{
-        		System.out.println("No valid license found on this machine!!!");
+        		//System.out.println("No valid license found on this machine!!!");
         		System.exit(1);
       		launch(args);
         	}

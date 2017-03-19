@@ -1,7 +1,5 @@
 package numbersystem;
 
-import com.github.wnameless.math.NumberSystemConverter;
-
 public class TypeBin implements Convertor {
 
 	@Override

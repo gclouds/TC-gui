@@ -14,7 +14,8 @@ public enum ToValue {
 				return convertor.getHex(value);
 			} catch (Exception e) {
 				log.error(convertor.getClass()+">"+this.name()+" :: error for value: "+value, e);
-				throw e;
+				//throw e;
+				return value;
 			}
 		}
 	},TO_DEC("'d") {
@@ -24,7 +25,8 @@ public enum ToValue {
 				return convertor.getDec(value);
 			} catch (Exception e) {
 				log.error(convertor.getClass()+">"+this.name()+" :: error for value: "+value, e);
-				throw e;
+				//throw e;
+				return value;
 			}
 		}
 	},TO_OCT("'o") {
@@ -34,7 +36,8 @@ public enum ToValue {
 				return convertor.getOct(value);
 			} catch (Exception e) {
 				log.error(convertor.getClass()+">"+this.name()+" :: error for value: "+value, e);
-				throw e;
+				//throw e;
+				return value;
 			}
 		}
 	},TO_BIN("'b") {
@@ -44,7 +47,8 @@ public enum ToValue {
 				return convertor.getBin(value);
 			} catch (Exception e) {
 				log.error(convertor.getClass()+">"+this.name()+" :: error for value: "+value, e);
-				throw e;
+				//throw e;
+				return value;
 			}
 		}
 	};

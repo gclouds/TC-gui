@@ -10,8 +10,8 @@ import jdk.nashorn.internal.objects.NativeFunction;
 import library.LicenseUtill;
 import sun.misc.GC;
 
-public class LoadLicenceC {
-	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LoadLicenceC.class);
+public class CheckLicense {
+	public final static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CheckLicense.class);
 	public static LicenseUtill loadLibrary;
 
 	public static LicenseUtill getLicenseUtill()  {
@@ -35,6 +35,7 @@ public class LoadLicenceC {
 	
 	public static boolean checkLic(LicenseUtill loadLibrary) {
 		try {
+			System.out.println("checking license...");
 			log.info("Checking license info with arg: 0, tc_gui, 16.4");
 			int check_out_lic = loadLibrary.check_out_lic(0, "tc_gui", "16.4");
 			log.info("checking license completed returned: " + check_out_lic);
@@ -43,14 +44,14 @@ public class LoadLicenceC {
 			} else {
 
 				System.out.println(
-						"LICENSING\n************************************************************************\n***** Truechip("
+						"************************************************************************\n***** Truechip("
 								+ check_out_lic
-								+ "): No valid license checked out for Truechip_GUI *****\n**********************************************************************");
+								+ "): No valid license checked out for Truechip_GUI *****\n************************************************************************");
 			}
 
 		} catch (Exception e) {
 			log.error(e);
 		}
-		return true;
+		return false;
 	}
 }

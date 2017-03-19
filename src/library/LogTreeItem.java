@@ -49,6 +49,7 @@ public class LogTreeItem extends TreeItem<Map<String, Object>>{
 	}
 
 
+	@SuppressWarnings("restriction")
 	public ContextMenu getContextMenu() {
 		toHexMenu.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -88,15 +89,12 @@ public class LogTreeItem extends TreeItem<Map<String, Object>>{
 			String cellvalue = (String) keyset.getValue();
 			log.info("converting value for:: "+keyset.getKey()+":"+cellvalue);
 			String[] splitedCellValue = cellvalue.split("'");
-			if(splitedCellValue.length==2){
-				try {
-					cellvalue=getConvertedValue(splitedCellValue[1].charAt(0)+"",splitedCellValue[0], splitedCellValue[1].substring(1),toValue);
-					logModel.put(columnHeader, cellvalue);
-					log.info("converted value for:: "+keyset.getKey()+":"+cellvalue);
-				} catch (Exception e) {
-					log.error(e);
-				}
-				
+			try {
+				cellvalue=getConvertedValue(splitedCellValue[1].charAt(0)+"",splitedCellValue[0], splitedCellValue[1].substring(1),toValue);
+				logModel.put(columnHeader, cellvalue);
+				log.info("converted value for:: "+keyset.getKey()+":"+cellvalue);
+			} catch (Exception e) {
+				log.error("error:: "+cellvalue+", "+toValue,e);
 			}
 		}
 		Map<String, Object> clonedMap = (Map<String, Object>) ((HashMap<String, Object>) logModel).clone();
@@ -106,6 +104,10 @@ public class LogTreeItem extends TreeItem<Map<String, Object>>{
 	}
 	
 	public static String getConvertedValue(String columnHeader,String prefix, String value,ToValue toValue) throws Exception {
+		value=value.toUpperCase();
+		log.info("==>>getConvertedValue");
+		log.info("header:: "+columnHeader+",prefix:: "+prefix+", value:: "+value+", toValue:: "+toValue);
+
 		if (columnHeader.contains("d")) {
 			Convertor convertor = NumberSystemUtils.getDecConvertor();
 			value=prefix+toValue.getPrefix()+toValue.getConvertedValue(convertor, value);
@@ -120,6 +122,7 @@ public class LogTreeItem extends TreeItem<Map<String, Object>>{
 			Convertor convertor = NumberSystemUtils.getBinConvertor();
 			value=prefix+toValue.getPrefix()+toValue.getConvertedValue(convertor, value);
 		}
+		log.info("<<==getConvertedValue, returned:: "+value);
 		return value;
 	}
 
