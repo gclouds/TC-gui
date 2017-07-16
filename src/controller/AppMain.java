@@ -23,8 +23,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import library.LicenseUtill;
-import utils.Configurations;
 import utils.CheckLicense;
+import utils.Configurations;
 import utils.RootLogger;
 
 /**
@@ -105,7 +105,7 @@ public class AppMain extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-    	boolean isConsoleAppender=false;
+    	boolean isConsoleAppender=true;
     	boolean isLicensed=true;
     	if(args.length==1 && args[0].equalsIgnoreCase("show")){
     		isConsoleAppender=true;
@@ -117,8 +117,8 @@ public class AppMain extends Application {
         		launch(args);
         	}else{
         		//System.out.println("No valid license found on this machine!!!");
-        		System.exit(1);
-      		launch(args);
+        		//System.exit(1);
+        		launch(args);
         	}
         	//launch(args);
             

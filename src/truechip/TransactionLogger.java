@@ -1,10 +1,13 @@
 package truechip;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import controller.MainPageController;
 import javafx.collections.ObservableList;
@@ -58,6 +61,7 @@ public class TransactionLogger {
 	public TextArea consoleLog = new TextArea();
 	FlowPane rightSideContent = new FlowPane();
 	ComboBox targetComboBox = new ComboBox();
+	ComboBox fieldsList= new ComboBox<>();
 	Thread thread;
 	MainPageController mainController;
 	Button refreshButton;
@@ -74,7 +78,7 @@ public class TransactionLogger {
 		refreshButton.setOnMouseClicked(this::setLoggerView);
 		searchTxt= new TextField();
 		searchTxt.setOnKeyReleased(this::search);
-		ToolBar tool= new ToolBar(refreshButton,new Label("Search:"),searchTxt);
+		ToolBar tool= new ToolBar(refreshButton,new Label("Search:"),fieldsList,searchTxt);
 		listView.setTop(tool);
 	}
 
@@ -192,6 +196,8 @@ public class TransactionLogger {
 				sp.setDividerPositions(1f);
 
 			}
+			Collection<String> keySet = logData.getHeaderMap().values();
+			fieldsList.getItems().addAll(keySet);
 			listView.setCenter(sp);
 		
 		} catch (Exception e) {
@@ -215,7 +221,13 @@ public class TransactionLogger {
         }
         else {
         	LogTreeItem filteredRoot = new LogTreeItem();
-            filter(rootItem, filter, filteredRoot);
+        	
+            if(fieldsList.getValue()!=null){
+            	log.info("seariching in field: "+fieldsList.getValue().toString());
+            	filter(rootItem,fieldsList.getValue().toString(), filter, filteredRoot);
+            }else{
+            	filter(rootItem, filter, filteredRoot);
+            }
             centerListView.setRoot(filteredRoot);
         }
 		
@@ -238,12 +250,29 @@ public class TransactionLogger {
             }
         }
     }
+
+    private void filter(LogTreeItem root,String field, String filter, LogTreeItem filteredRoot) {
+        for (TreeItem<Map<String, Object>> child : root.getChildren()) {            
+        	LogTreeItem filteredChild = new LogTreeItem(child.getValue(),this);
+            filteredChild.setExpanded(true);
+            filter((LogTreeItem)child, filter, filteredChild );
+            if (!filteredChild.getChildren().isEmpty() || isMatch(filteredChild.getValue(), filter,field)) {
+            	log.info(filteredChild.getValue() + " matches.");
+                filteredRoot.getChildren().add(filteredChild);
+            }
+        }
+    }
     
 /*    private boolean isMatch(Map<String, Object> value, String filter) {
         return value.values().stream().anyMatch((Object o) -> o.toString().contains(filter));
     }*/
-    
     private boolean isMatch(Map<String, Object> value, String filter) {
+    	log.info(value);
+        return value.values().stream().anyMatch((Object o) -> o.toString().contains(filter));
+    }   
+    private boolean isMatch(Map<String, Object> value, String filter,String key) {
+    	String text = value.get(key).toString();
+    	log.info(text);
         return value.values().stream().anyMatch((Object o) -> o.toString().contains(filter));
     }
 }

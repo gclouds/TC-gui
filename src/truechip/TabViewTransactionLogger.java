@@ -62,6 +62,7 @@ public class TabViewTransactionLogger {
 	private void createNewTab(File logFile) {
 		TransactionLogger newLoggerView= new TransactionLogger(mainController);
 		Tab newLogTab= new Tab();
+		//newLogTab.setStyle("-fx-background-color: #3c3c3c;");
 		newLogTab.setText(logFile.getName());
 		Tooltip tip= new Tooltip(logFile.getAbsolutePath());
 		newLogTab.setTooltip(tip);
